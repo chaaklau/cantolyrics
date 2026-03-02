@@ -1,0 +1,16 @@
+
+<div class="container">
+    <!-- Intro Section for EdUHK / CHI3565 Context -->
+    <div class="project-intro" style="margin-bottom: 30px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-color);">
+        <h1 style="color: var(--primary); margin-top: 0; font-size: 2em; text-align: left;">數碼時代廣東歌歌詞分析 <br><span style="font-size: 0.6em; color: #666; font-weight: normal;">Cantonese Lyrics Analysis in the Digital Age</span></h1>
+        <p style="font-size: 1.1em;"><strong>主講：</strong>劉擇明 Chaak Ming Lau (香港教育大學 語言學及現代語言系 / 語言學及語言研究中心)</p>
+        <p><strong>背景：</strong>本頁面為香港教育大學「CHI3565 漢語修辭學」客席講堂的輔助教材，並為未來的「數碼人文 (Digital Humanities)」課程提供實例示範與研究平台。</p>
+        <p><strong>摘要：</strong>本項目運用數碼人文方法，以數據為本對 1986 至 2025 年間近千首香港發行的粵語流行歌進行計量分析。系統結合 NLP、詞庫模型分析 (如 LIWC) 及 AI 技術，從語音（聲調走向、押韻、疊字）、在用詞（文言/口語比例、詞彙多樣性）及內容（主題情感、地區投射）三大維度，科學化地探討香港流行音樂歌詞文本的演變特徵。</p>
+        <p style="margin-bottom: 0; color: var(--accent-1); font-weight: bold;">請透過下方功能表切換時期（十年、五年、每年），觀察各大語言與修辭指標的歷時變化與趨勢。</p>
+    </div>
+
+    <div class="card full-width" style="margin-bottom: 25px;">
+        <div class="stats-box">
+            <div class="stat-item">
+                <div class="value" id="statTotal">--</div>
+                <div class="label">Total SongsAnalyzed <span>總數量</span></div>

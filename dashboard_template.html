@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cantonese Lyrics Dashboard / 粵語流行歌語料庫分析</title>
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #F7F5F0;
+            --card-bg: #FFFFFF;
+            --text-color: #333333;
+            --primary: #3E5A68;
+            --accent-1: #C27D5C;
+            --accent-2: #6A8A82;
+            --accent-3: #A7998F;
+            --accent-4: #434B4D;
+            --border-color: #DFDCD5;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        /* Navbar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .navbar-brand { font-size: 1.25em; font-weight: 500; letter-spacing: -0.5px; }
+        .navbar-brand span { font-size: 0.8em; font-weight: normal; color: rgba(255,255,255,0.8); margin-left: 8px;}
+        .nav-controls button {
+            padding: 6px 14px; font-size: 14px; border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 4px; background: rgba(255,255,255,0.1); color: white; cursor: pointer; transition: all 0.2s;
+            margin-left: 8px;
+        }
+        .nav-controls button:hover { background: rgba(255,255,255,0.2); }
+        .nav-controls button.active { background: white; color: var(--primary); border-color: white; font-weight: bold; }
+        
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px;}
+        h2, h3 { color: var(--primary); text-align: center; }
+        .bilingual { font-size: 0.85em; color: #888; display: block; margin-top: 4px; font-weight: normal; }
+        
+        /* Stats Box */
+        .stats-box {
+            display: flex; justify-content: space-around; flex-wrap: wrap; text-align: center; gap: 15px;
+        }
+        .stat-item .value { font-size: 1.8em; font-weight: 600; color: var(--primary); }
+        .stat-item .label { font-size: 0.9em; font-weight: 500; color: #555; }
+        .stat-item .label span { display: block; font-weight: normal; color: #888; font-size: 0.9em; }
+        
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; }
+        .card { background: var(--card-bg); border-radius: 6px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-color); position: relative; }
+        .card.full-width { grid-column: 1 / -1; }
+        .chart { width: 100%; height: 380px; }
+        
+        .toggle-btn { cursor: pointer; color: var(--primary); text-decoration: underline; font-size: 0.85em; text-align: center; margin-top: 10px; display: block; }
+        .song-list-container { display: none; margin-top: 15px; max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; background: #fafafa; font-size: 0.9em; }
+        .song-item { display: flex; justify-content: space-between; padding: 4px 8px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .song-item:hover { background-color: #fff; }
+        .song-item:last-child { border-bottom: none; }
+        
+        /* Modal for Lyrics */
+        .modal { display: none; position: fixed; z-index: 1500; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 30px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 8px; position: relative; }
+        .close-modal { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; margin-top: -10px; }
+        .close-modal:hover { color: black; }
+        #lyricsContent { white-space: pre-wrap; font-size: 1.1em; line-height: 1.8; margin-top: 20px; color: #444; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="navbar-brand">
+        Cantonese Lyrics Evolution <span>粵語流行歌語料庫分析</span>
+    </div>
+    <div class="nav-controls">
+        <button id="btnPeriod10" class="active">10-Year <span>十年</span></button>
+        <button id="btnPeriod5">5-Year <span>五年</span></button>
+        <button id="btnYearly">Yearly <span>每年</span></button>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Intro Section for EdUHK / CHI3565 Context -->
+    <div class="project-intro" style="margin-bottom: 30px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-color);">
+        <h1 style="color: var(--primary); margin-top: 0; font-size: 2em; text-align: left;">數碼時代廣東歌歌詞分析 <br><span style="font-size: 0.6em; color: #666; font-weight: normal;">Cantonese Lyrics Analysis in the Digital Age</span></h1>
+        <p style="font-size: 1.1em;"><strong>主講 / Speaker：</strong><a href="https://chaak.net" target="_blank" style="color: var(--primary); text-decoration: underline;">劉擇明 Chaak Ming Lau</a> (香港教育大學 語言學及現代語言系 / 語言學及語言研究中心 EdUHK LML / CRLLS)</p>
+        <p><strong>背景 / Context：</strong>本頁面為香港教育大學「CHI3565 漢語修辭學」客席講堂的輔助教材，並為未來的「數碼人文 (Digital Humanities)」課程提供實例示範與研究平台。<br><span style="font-size: 0.9em; color: #555;">This page serves as supplementary material for the guest lecture of "CHI3565 Chinese Rhetoric" at EdUHK, and as a practical demonstration and research platform for future Digital Humanities courses.</span></p>
+        <p><strong>摘要 / Abstract：</strong>本項目運用數碼人文方法，以數據為本對 1986 至 2025 年間近千首香港發行的粵語流行歌進行計量分析。系統結合 NLP、詞庫模型分析 (如 LIWC) 及 AI 技術，從語音（聲調走向、押韻、疊字）、在用詞（文言/口語比例、詞彙多樣性）及內容（主題情感、地區投射）三大維度，科學化地探討香港流行音樂歌詞文本的演變特徵。<br><span style="font-size: 0.9em; color: #555;">This project applies Digital Humanities methods for a data-driven quantitative analysis of nearly a thousand Cantonese popular songs distributed in Hong Kong from 1986 to 2025. Combining NLP, lexicon-based models (e.g. LIWC), and AI techniques, the system scientifically explores the evolutionary characteristics of popular music lyrics in terms of phonetics/phonology (tone movements, rhymes, reduplication), lexis (Standard Written Chinese vs Spoken Cantonese, lexical diversity), and themes (emotions, geographic projections).</span></p>
+        <p style="margin-bottom: 0; color: var(--accent-1); font-weight: bold;">請透過下方功能表切換時期（十年、五年、每年），觀察各大語言與修辭指標的歷時變化與趨勢。<br><span style="font-size: 0.85em; font-weight: normal;">Please use the navigation menu below to toggle between time periods (10-Year, 5-Year, Yearly) to observe the diachronic changes and trends.</span></p>
+    </div>
+
+    <div class="card full-width" style="margin-bottom: 25px;">
+        <div class="stats-box">
+            <div class="stat-item">
+                <div class="value" id="statTotal">--</div>
+                <div class="label">Total SongsAnalyzed <span>總數量</span></div>
+            </div>
+            <div class="stat-item">
+                <div class="value" id="statYears">--</div>
+                <div class="label">Years Covered <span>涵蓋年份</span></div>
+            </div>
+            <div class="stat-item">
+                <div class="value" id="statSinger" style="font-size: 1.4em; padding-top: 6px;">--</div>
+                <div class="label">Top Singer <span>最高產歌手</span></div>
+            </div>
+            <div class="stat-item">
+                <div class="value" id="statLyricist" style="font-size: 1.4em; padding-top: 6px;">--</div>
+                <div class="label">Top Lyricist <span>最高產填詞人</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="card">
+            <h3>Tone Jump Ratio <span class="bilingual">高聲調跳躍比例</span></h3>
+            <div class="bilingual" style="text-align: center;">Songs with >30% large tone jumps (音調差異大的歌曲比例)</div>
+            <div id="chartJump" class="chart"></div>
+            <span class="toggle-btn" onclick="toggleSongs('listJump', 'jump', true)">Toggle Top Songs</span>
+            <div id="listJump" class="song-list-container"></div>
+        </div>
+        <div class="card">
+            <h3>Clear Rhyme Ratio <span class="bilingual">清晰押韻比例</span></h3>
+            <div class="bilingual" style="text-align: center;">Songs where >50% lines rhyme (超過半數句子押韻的歌曲比例)</div>
+            <div id="chartRhyme" class="chart"></div>
+            <span class="toggle-btn" onclick="toggleSongs('listRhyme', 'rhyme', true)">Toggle Top Songs</span>
+            <div id="listRhyme" class="song-list-container"></div>
+        </div>
+        
+        <div class="card full-width">
+            <h3>Dominant Rhyme Distribution <span class="bilingual">主要押韻分佈</span></h3>
+            <div class="bilingual" style="text-align: center;">Based on the single most frequent rhyme per song (按每首歌最頻繁使用的韻母計算)</div>
+            <div id="chartRhymeBreakdown" class="chart" style="height: 400px;"></div>
+        </div>
+
+        <div class="card">
+            <h3>Repeated Words <span class="bilingual">疊字/疊詞使用</span></h3>
+            <div class="bilingual" style="text-align: center;">Frequency of reduplication (e.g., 尋尋覓覓)</div>
+            <div id="chartRepetition" class="chart"></div>
+            <span class="toggle-btn" onclick="toggleSongs('listRepetition', 'repeated', true)">Toggle Top Songs</span>
+            <div id="listRepetition" class="song-list-container"></div>
+        </div>
+        <div class="card">
+            <h3>Lexical Diversity (TTR) <span class="bilingual">詞彙多樣性</span></h3>
+            <div class="bilingual" style="text-align: center;">Type-Token Ratio (數值越高代表用詞越豐富)</div>
+            <div id="chartTTR" class="chart"></div>
+            <span class="toggle-btn" onclick="toggleSongs('listTTR', 'ttr', true)">Toggle Top Songs</span>
+            <div id="listTTR" class="song-list-container"></div>
+        </div>
+
+        <div class="card full-width">
+            <h3>Regional Mentions Heatmap <span class="bilingual">各區域提及次數熱圖</span></h3>
+            <div class="bilingual" style="text-align: center;">Frequency of locations aggregated by Region (以區域整合的真實地名熱度)</div>
+            <div id="chartPlacesHeatmap" class="chart" style="height: 500px;"></div>
+        </div>
+
+        <div class="card">
+            <h3>Language Register <span class="bilingual">語言風格</span></h3>
+            <div class="bilingual" style="text-align: center;">Explicit Cantonese vs Standard Written Chinese (廣東話與書面語比例)</div>
+            <div id="chartRegister" class="chart"></div>
+            <span class="toggle-btn" onclick="toggleSongs('listRegister', 'cantonese', true)">Toggle Top Songs</span>
+            <div id="listRegister" class="song-list-container"></div>
+        </div>
+        <div class="card">
+            <h3>English Inclusion <span class="bilingual">夾雜英文</span></h3>
+            <div class="bilingual" style="text-align: center;">% of songs containing English words (包含英文字詞的歌曲比例)</div>
+            <div id="chartEnglish" class="chart"></div>
+            <span class="toggle-btn" onclick="toggleSongs('listEnglish', 'english', true)">Toggle Top Songs</span>
+            <div id="listEnglish" class="song-list-container"></div>
+        </div>
+        <div class="card">
+            <h3>Day vs Night <span class="bilingual">日與夜</span></h3>
+            <div class="bilingual" style="text-align: center;">Mentions of Day vs Night based terms (提及白晝與黑夜的對比)</div>
+            <div id="chartDayNight" class="chart"></div>
+            <div style="display:flex; justify-content: space-around;">
+               <span class="toggle-btn" onclick="toggleSongs('listDay', 'day', true)">Top Day Songs</span>
+               <span class="toggle-btn" onclick="toggleSongs('listNight', 'night', true)">Top Night Songs</span>
+            </div>
+            <div id="listDay" class="song-list-container" style="margin-bottom: 5px;"></div>
+            <div id="listNight" class="song-list-container"></div>
+        </div>
+        <div class="card">
+            <h3>Love Theme <span class="bilingual">愛情主題</span></h3>
+            <div class="bilingual" style="text-align: center;">Songs focused on Romantic Love or Heartbreak (情歌與失戀歌比例)</div>
+            <div id="chartLove" class="chart"></div>
+        </div>
+        <div class="card">
+            <h3>Sentiment <span class="bilingual">情感分數</span></h3>
+            <div class="bilingual" style="text-align: center;">Average emotional polarity (-1 to 1) (平均情感正負面分數)</div>
+            <div id="chartSentiment" class="chart"></div>
+            <div style="display:flex; justify-content: space-around;">
+               <span class="toggle-btn" onclick="toggleSongs('listSentimentPos', 'sentiment', true)">Top Positive</span>
+               <span class="toggle-btn" onclick="toggleSongs('listSentimentNeg', 'sentiment', false)">Top Negative</span>
+            </div>
+            <div id="listSentimentPos" class="song-list-container" style="margin-bottom: 5px;"></div>
+            <div id="listSentimentNeg" class="song-list-container"></div>
+        </div>
+        <div class="card">
+            <h3>General Place Mention <span class="bilingual">提及任何地方</span></h3>
+            <div class="bilingual" style="text-align: center;">% of songs mentioning at least one place (提及地方的整體比例)</div>
+            <div id="chartPlaces" class="chart"></div>
+            <span class="toggle-btn" onclick="toggleSongs('listPlaces', 'places', true)">Toggle Top Songs</span>
+            <div id="listPlaces" class="song-list-container"></div>
+        </div>
+    </div>
+    
+    <!-- Conclusion Section Mapping to Slides -->
+    <div class="project-conclusion" style="margin-top: 40px; margin-bottom: 20px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-color);">
+        <h2 style="color: var(--primary); margin-top: 0; text-align: left;">結論與研究視角 / Conclusions & Research Perspectives</h2>
+        <p>比對 1986-2025 年的圖表走勢與本課堂提出的研究假設，我們能歸納出以下跨時代的語言及文學現象：<br><span style="font-size: 0.9em; color: #555;">By examining the trends from 1986 to 2025 against the hypotheses introduced in class, we can observe the following diachronic linguistic and literary phenomena:</span></p>
+        <ul style="line-height: 1.8; color: var(--text-color);">
+            <li style="margin-bottom: 10px;"><strong>語音的持續與變化 / Phonetic Constraints & Changes：</strong>由「旋律要求」驅使的語言特徵恆定不變（如為配合 0243 走向，相鄰聲調的「高聲調大跳躍」比例長期維持極低），這印證了「先曲後詞」的生產限制（假設 1 成立）。相對而言，不影響旋律結構的<strong>押韻</strong>比例逐漸提高（近十年接近 80%），而<strong>疊字</strong>作爲修辭手法未有消減。<br><span style="font-size: 0.9em; color: #555;">Features driven by melody restrictions remain constant (e.g., low ratio of large tonal jumps due to the constraints of the 0243 melodic contour), confirming the "melody-first" production (Hypothesis 1 verified). Meanwhile, "free" features like rhymes have gradually increased (near 80% recently) and reduplication remains prevalent.</span></li>
+            <li style="margin-bottom: 10px;"><strong>語體與修辭風格演化 / Evolution of Register & Rhetoric：</strong>隨着流行文化加速及時代變遷，宏觀數據顯示歌詞寫作減少了雕琢與文言、莊重成份，變得更貼近<strong>口語化與日常體</strong>（假設 3 成立）。同時，整體詞彙多樣性 (Type-Token Ratio, TTR) 及異常詞數量均反映有輕微下降趨勢。<br><span style="font-size: 0.9em; color: #555;">Macro data shows a reduction in elaborate, classical, or formal vocabulary, moving closer to spoken Cantonese and everyday language (Hypothesis 3 verified). Overall lexical diversity (TTR) and rare vocabulary exhibit a slight downward trend.</span></li>
+            <li style="margin-bottom: 10px;"><strong>主題意識與國際化進程 / Thematic Focus & Internationalization：</strong>出乎意料地，數據圖表顯示大部份廣東歌至今依然<strong>以浪漫愛情及失戀為絕對主要題材</strong>，並未如日本流行文化般出現明顯「由戀愛轉向自我肯定」的大規模轉移（假設 6 暫不成立）。在地名引用上，多局限於香港、台灣、日本及西方旅遊熱點，未見因國際視野提升而令文本發生深層的「主題國際化」（假設 5 暫不成立）。<br><span style="font-size: 0.9em; color: #555;">Contrary to expectations, Cantonese lyrics remain overwhelmingly dominated by romantic love and heartbreak themes, lacking the paradigm shift toward "self-affirmation" seen in Japanese pop (Hypothesis 6 unsubstantiated). Geographic references remain localized (Hong Kong, Taiwan, Japan, Europe), without deep thematic internationalization (Hypothesis 5 unsubstantiated).</span></li>
+            <li style="margin-bottom: 0;"><strong>情感波動 / Sentiment Fluctuations：</strong>從整套歌詞的情感分析分數 (Sentiment) 可見，歷年總體趨平穩，惟隨年代推進呈<strong>輕微而緩慢的向下（悲觀）趨勢</strong>。在晝夜意象比例上，寫「日」的歌曲數量仍持續多於寫「夜」。<br><span style="font-size: 0.9em; color: #555;">Overall sentiment scores remain relatively stable but indicate a slight, gradual downward (more pessimistic) trend over the decades. Regarding day/night imagery, songs referencing "day" still consistently outnumber those referencing "night".</span></li>
+        </ul>
+        <div style="margin-top: 25px; padding: 15px; background: var(--bg-color); border-left: 4px solid var(--accent-2); border-radius: 4px;">
+            <strong>總結 / Summary：</strong>藉由上述數據視覺化儀表板可見，數碼人文 (Digital Humanities) 方法能處理傳統文學分析難以涵蓋的大規模語料，發掘文本底層的語言特質與時代情感，並讓文科學生能通過 AI 輔助獨立進行大型文本探索與實證研究。<br><span style="font-size: 0.9em; color: #555;">As demonstrated by the dashboard, Digital Humanities methods can process large-scale corpora beyond the reach of traditional literary analysis, uncovering underlying linguistic traits and temporal sentiments. It empowers humanities students to conduct independent, large-scale textual exploration and empirical research with AI assistance.</span>
+        </div>
+    </div>
+
+    <!-- Acknowledgements, Tools & References Section -->
+    <div class="project-footer" style="margin-top: 20px; margin-bottom: 40px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-color);">
+        <h3 style="color: var(--primary); margin-top: 0; text-align: left;">鳴謝與使用工具 / Acknowledgements & Tools</h3>
+        <p style="font-size: 0.95em;">本研究項目使用了多種開源工具及自然語言處理（NLP）資源，特此鳴謝：<br><span style="font-size: 0.9em; color: #555;">This research project utilizes various open-source tools and Natural Language Processing (NLP) resources. We would like to acknowledge:</span></p>
+        <ul style="font-size: 0.9em; line-height: 1.6; color: var(--text-color);">
+            <li><strong>Cantonese Detect (<a href="https://github.com/CanCLID/cantonesedetect" target="_blank" style="color: var(--primary);">cantonese-detect</a>):</strong> 用於辨識歌詞中的粵語成份與書面語比例。<br><span style="color: #666;">Used to detect the proportion of explicit Cantonese components vs. Standard Written Chinese.</span></li>
+            <li><strong>spaCy:</strong> 工業級核心 NLP 庫，用於實體命名識別（Named Entity Recognition），以擷取地名。<br><span style="color: #666;">Industrial-strength NLP library used for Named Entity Recognition (NER) to extract geographical locations.</span></li>
+            <li><strong>LIWC-Canto / LIWC:</strong> 運用包含四萬多詞條的廣東話分類詞庫進行文本主題（如愛、日、夜）及情感分析。<br><span style="color: #666;">Applied for thematic (e.g. Love, Day, Night) and sentiment analysis using a Cantonese categorized lexicon of over 40,000 words.</span></li>
+            <li><strong>ToJyutping:</strong> 用於將漢字轉化為粵拼（Jyutping），協助進行聲調走向與押韻計量。<br><span style="color: #666;">Used to convert Chinese characters into Jyutping for tone movement and rhyme computations.</span></li>
+        </ul>
+
+        <h3 style="color: var(--primary); margin-top: 25px; text-align: left;">參考文獻 / References</h3>
+        <ul style="font-size: 0.85em; line-height: 1.6; color: #555;">
+            <li>Fung, A. Y. H., & Chik, A. (Eds.). (2020). <em>Made in Hong Kong: studies in popular music.</em> Routledge.</li>
+            <li>Lau, C.-M., Lau, M.& To, A. W. H. (2024). The extraction and fine-grained classification of written Cantonese materials through linguistic feature detection. In Proceedings of the 2nd Workshop on Resources and Technologies for Indigenous, Endangered and Lesser-resourced Languages in Eurasia (EURALI) @ LREC-COLING 2024 (pp. 24–29). ELRA and ICCL. https://aclanthology.org/2024.eurali-1.4/</li>
+            <li>Lee, Y. H. J. (2023). A corpus study of tone-melody correspondence in Cantopop, 2000–2020 (Doctoral dissertation, University of British Columbia).</li>
+            <li>朱耀偉 (2019). 《歲月如歌: 詞話香港粵語流行曲 (增訂版)》. 三聯書店（香港）有限公司.</li>
+            <li>黃湛森 (Wong, Jum-Sum James) (2003). 《粵語流行曲的發展與興衰：香港流行音樂研究（1949－1997）》. 香港大學博士論文.</li>
+        </ul>
+
+        <!-- TypeDuck Ad -->
+        <div style="margin-top: 30px; padding: 25px; background: rgba(194, 125, 92, 0.08); border: 2px dashed var(--accent-1); border-radius: 8px; text-align: center;">
+            <h3 style="color: var(--accent-1); margin-top: 0; font-size: 1.5em;">🦆 TypeDuck 粵拼中文輸入法</h3>
+            <p style="font-size: 1.05em; margin-bottom: 8px;"><strong>Cantonese Phonetic Input Method (Jyutping) with Minority Language Prompts</strong><br>設有少數族裔語言提示的粵拼中文輸入法 (EDB(LE)/P&R/CL/104)</p>
+            <p style="font-size: 0.95em; color: #555; margin-bottom: 20px;">支持普及粵語拼音，為少數族裔與本地學生提供便利的聯想字輸入方案！<br>Supporting Jyutping popularization and providing convenient predictive input solutions for ethnic minorities and local students!</p>
+            <a href="https://typeduck.hk" target="_blank" style="display: inline-block; padding: 10px 25px; background-color: var(--accent-1); color: white; text-decoration: none; border-radius: 4px; font-weight: bold; transition: background-color 0.2s;">了解更多 / Learn More</a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Lyrics -->
+<div id="lyricsModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeModal()">&times;</span>
+    <h2 id="lyricsTitle" style="color:var(--primary); margin-bottom: 5px;">Title</h2>
+    <div id="lyricsSubtitle" style="color:#666; text-align:center; font-size: 0.9em; margin-bottom: 10px;">Singer • Year</div>
+    <div id="lyricsContent"></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+    const data = DB_DATA;
+    let currentMode = '10';
+    
+    // Inject Summary Stats
+    document.getElementById('statTotal').innerText = data.global_stats.total_songs;
+    document.getElementById('statYears').innerText = data.global_stats.years_covered;
+    document.getElementById('statSinger').innerText = data.global_stats.top_singer;
+    document.getElementById('statLyricist').innerText = data.global_stats.top_lyricist;
+
+    // Toggle logic for time periods
+    const buttons = {
+        '10': document.getElementById('btnPeriod10'),
+        '5': document.getElementById('btnPeriod5'),
+        '1': document.getElementById('btnYearly')
+    };
+
+    function setMode(mode) {
+        currentMode = mode;
+        Object.values(buttons).forEach(btn => btn.classList.remove('active'));
+        buttons[mode].classList.add('active');
+        renderCharts();
+    }
+
+    buttons['10'].addEventListener('click', () => setMode('10'));
+    buttons['5'].addEventListener('click', () => setMode('5'));
+    buttons['1'].addEventListener('click', () => setMode('1'));
+
+    // Palette
+    const colors = {
+        primary: '#3E5A68', secondary: '#C27D5C', tertiary: '#6A8A82',
+        neutral: '#A7998F', dark: '#434B4D', day: '#EFC050',
+        night: '#2C3E50', notClear: '#BDC3C7', love: '#D9534F',
+        other: '#95A5A6', grid: '#EAE8E3',
+        divergingColors: ['#3E5A68', '#6A8A82', '#9BB4A6', '#C27D5C', '#D9987B', '#E5BCA8', '#434B4D', '#A7998F', '#8C7A6B', '#D0C3BD', '#4A6984', '#7D9AAA', '#B45A45', '#E18A70', '#2E3B42']
+    };
+
+    const layoutBase = {
+        font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' },
+        margin: { t: 20, b: 70, l: 45, r: 20 },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        xaxis: { tickangle: -45, gridcolor: colors.grid, linecolor: '#ccc' },
+        yaxis: { gridcolor: colors.grid, linecolor: '#ccc' },
+        hovermode: 'closest',
+        showlegend: false
+    };
+    
+    const mergeLayout = (extra) => Object.assign({}, layoutBase, extra);
+
+    function renderCharts() {
+        let labels, stats;
+        if (currentMode === '10') { labels = data.labels_10; stats = data.stats_10; }
+        else if (currentMode === '5') { labels = data.labels_5; stats = data.stats_5; }
+        else { labels = data.labels_yearly; stats = data.stats_yearly; }
+        
+        const barConfig = { displayModeBar: false, responsive: true };
+
+        function plotBarPerc(id, title, yData, color, topSongsArray, totalSongsArray) {
+            Plotly.react(id, [{
+                x: labels, y: yData, type: 'bar',
+                marker: { color: color },
+                customdata: labels.map((_, i) => [
+                    Math.round(yData[i] * totalSongsArray[i] / 100), // raw count
+                    totalSongsArray[i],
+                    topSongsArray[i]
+                ]),
+                hovertemplate: '%{x}<br><b>%{y:.1f}%</b> (%{customdata[0]} / %{customdata[1]} songs)%{customdata[2]}<extra></extra>'
+            }], mergeLayout({ yaxis: { title: title, range: [0, 100] } }), barConfig);
+        }
+
+        plotBarPerc('chartJump', '% of Songs', stats.high_jump, colors.primary, stats.top_songs.high_jump, stats.total_songs);
+        plotBarPerc('chartRhyme', '% of Songs', stats.clear_rhyme, colors.secondary, stats.top_songs.clear_rhyme, stats.total_songs);
+        plotBarPerc('chartRepetition', '% of Songs', stats.repeated_words, colors.tertiary, stats.top_songs.repeated_words, stats.total_songs);
+        plotBarPerc('chartPlaces', '% of Songs', stats.place, colors.neutral, stats.top_songs.place, stats.total_songs);
+        plotBarPerc('chartEnglish', '% of Songs', stats.english, colors.primary, stats.top_songs.english, stats.total_songs);
+
+        function createTrace(xData, yData, name, color, topSongsArray) {
+            return {
+                x: xData, y: yData, name: name, type: 'bar', marker: {color: color},
+                customdata: xData.map((_, i) => [
+                    Math.round(yData[i] * stats.total_songs[i] / 100),
+                    stats.total_songs[i],
+                    topSongsArray[i]
+                ]),
+                hovertemplate: '%{x}<br>'+name+': <b>%{y:.1f}%</b> (%{customdata[0]} / %{customdata[1]} songs)%{customdata[2]}<extra></extra>'
+            };
+        }
+
+        Plotly.react('chartRegister', [
+            createTrace(labels, stats.cantonese_alot, 'Cantonese (A lot, ≥3)', colors.secondary, stats.top_songs.cantonese_alot),
+            createTrace(labels, stats.cantonese, 'Cantonese (Some, 1-2)', '#DEA88D', stats.top_songs.cantonese),
+            createTrace(labels, stats.neutral_swc, 'Standard/Neutral (0)', colors.neutral, stats.top_songs.neutral_swc)
+        ], mergeLayout({ barmode: 'stack', showlegend: true, legend: {orientation: 'h', y: 1.1}, yaxis: { title: '% of Songs', range: [0, 100] } }), barConfig);
+        
+        Plotly.react('chartTTR', [{
+            x: labels, y: stats.ttr, type: 'scatter', mode: 'lines+markers',
+            marker: { size: 8, color: colors.primary }, line: { color: colors.primary, width: 2 },
+            hovertemplate: '%{x}<br><b>%{y:.3f}</b><extra></extra>'
+        }], mergeLayout({ yaxis: { title: 'Average TTR' } }), barConfig);
+        
+        Plotly.react('chartDayNight', [
+            createTrace(labels, stats.day, 'Day', colors.day, stats.top_songs.day),
+            createTrace(labels, stats.night, 'Night', colors.night, stats.top_songs.night),
+            createTrace(labels, stats.not_clear, 'Not Clear', colors.notClear, stats.top_songs.not_clear)
+        ], mergeLayout({ barmode: 'group', showlegend: true, legend: {orientation: 'h', y: 1.1}, yaxis: { title: '% of Songs', range: [0, 100] } }), barConfig);
+        
+        Plotly.react('chartLove', [
+            createTrace(labels, stats.love, 'Love', colors.love, stats.top_songs.love),
+            createTrace(labels, stats.other, 'Other', colors.other, stats.top_songs.other)
+        ], mergeLayout({ barmode: 'stack', showlegend: true, legend: {orientation: 'h', y: 1.1}, yaxis: { title: '% of Songs', range: [0, 100] } }), barConfig);
+        
+        Plotly.react('chartSentiment', [{
+            x: labels, y: stats.sentiment_mean, type: 'scatter', mode: 'lines+markers',
+            error_y: { type: 'data', array: stats.sentiment_std, visible: true, color: colors.secondary, thickness: 1, width: 3 },
+            marker: { size: 8, color: colors.primary }, line: { color: colors.primary, width: 2 },
+            hovertemplate: 'Mean: %{y:.2f}<br>Std: ±%{error_y.array:.2f}<extra></extra>'
+        }], mergeLayout({ yaxis: { title: 'Score (-1 to 1)', range: [-1, 1] } }), barConfig);
+        
+        // Rhyme Breakdown - X is rhyme type, Y is song count
+        const rhymeTraces = labels.map((period, idx) => ({
+            x: data.top_rhymes,
+            y: data.top_rhymes.map(r => stats.rhymes[r][idx]),
+            name: period,
+            type: 'bar',
+            marker: { color: colors.divergingColors[idx % colors.divergingColors.length] },
+            hovertemplate: `Rhyme: %{x}<br>Period: <b>${period}</b><br>Song Count: %{y} / ${stats.total_songs[idx]}<extra></extra>`
+        }));
+        
+        Plotly.react('chartRhymeBreakdown', rhymeTraces, mergeLayout({ 
+            barmode: 'stack', showlegend: true, legend: {orientation: 'h', y: 1.15}, 
+            xaxis: { title: 'Rhyme Final (Type)', tickangle: 0 },
+            yaxis: { title: 'Number of Songs' },
+            margin: { t: 20, b: 60, l: 50, r: 20 }
+        }), barConfig);
+
+        // Regional Places Heatmap
+        // Ensure regions with zero count across ALL periods are excluded, else show them.
+        const activeRegions = data.all_places.filter(p => stats.places_counts[p].some(v => v > 0)).sort();
+        const zData = activeRegions.map(p => stats.places_counts[p]);
+
+        Plotly.react('chartPlacesHeatmap', [{
+            x: labels,
+            y: activeRegions,
+            z: zData,
+            type: 'heatmap',
+            colorscale: [
+                [0, '#FFFFFF'],
+                [0.1, '#DEE6E9'],
+                [0.4, '#6A8A82'],
+                [1.0, '#3E5A68']
+            ],
+            hovertemplate: '<b>%{y}</b><br>Period/Year: %{x}<br>Mentions: %{z}<extra></extra>'
+        }], Object.assign({}, layoutBase, {
+            margin: { l: 150, r: 20, t: 20, b: 80 }, // increased bottom margin so angled text is not clipped
+            xaxis: { tickangle: -45 },
+            yaxis: { autorange: 'reversed', tickangle: 0 } 
+        }), barConfig);
+    }
+
+    // Modal List Functions
+    function toggleSongs(containerId, metric, desc) {
+        const div = document.getElementById(containerId);
+        if (div.style.display === 'block') {
+            div.style.display = 'none';
+        } else {
+            div.style.display = 'block';
+            let sorted = [...data.songs].filter(s => s.metrics[metric] !== undefined && s.metrics[metric] !== null);
+            sorted.sort((a, b) => desc ? b.metrics[metric] - a.metrics[metric] : a.metrics[metric] - b.metrics[metric]);
+            
+            const top10 = sorted.slice(0, 10);
+            div.innerHTML = top10.map((s, i) => `
+                <div class="song-item" onclick='showLyrics(${JSON.stringify(s.id)})'>
+                    <span>${i+1}. ${s.title} (${s.year}) - ${s.singer}</span>
+                    <strong style="color:var(--primary)">${Number(s.metrics[metric]).toFixed(2)}</strong>
+                </div>
+            `).join('');
+            if (top10.length === 0) div.innerHTML = "<div>No data available</div>";
+        }
+    }
+
+    function showLyrics(songId) {
+        const song = data.songs.find(s => s.id === songId);
+        if (!song) return;
+        document.getElementById('lyricsTitle').innerText = song.title;
+        document.getElementById('lyricsSubtitle').innerText = `${song.singer} • ${song.year}`;
+        document.getElementById('lyricsContent').innerText = song.lyrics || 'No lyrics available.';
+        document.getElementById('lyricsModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('lyricsModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('lyricsModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    renderCharts();
+</script>
+</body>
+</html>

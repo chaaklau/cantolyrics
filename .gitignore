@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.env
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Mac
+.DS_Store
+
+# Project specific
+web/data.js
+web/index.html
+google_lyrics.json
+scraped_lyrics.json
+scrape_log.txt
+scrape_log2.txt
+tool/canto-liwc-temp.csv
