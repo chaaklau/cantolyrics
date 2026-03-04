@@ -50,6 +50,13 @@
         .nav-controls button.active { background: white; color: var(--primary); border-color: white; font-weight: bold; }
         
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px;}
+        @media (max-width: 600px) {
+            .container { margin: 15px auto; padding: 0 10px; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .navbar { padding: 10px 15px; }
+            .navbar-brand { font-size: 1.1em; }
+            .nav-controls button { padding: 4px 8px; font-size: 12px; margin-left: 4px; }
+        }
         h2, h3 { color: var(--primary); text-align: center; }
         .bilingual { font-size: 0.85em; color: #888; display: block; margin-top: 4px; font-weight: normal; }
         
@@ -61,7 +68,7 @@
         .stat-item .label { font-size: 0.9em; font-weight: 500; color: #555; }
         .stat-item .label span { display: block; font-weight: normal; color: #888; font-size: 0.9em; }
         
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .card { background: var(--card-bg); border-radius: 6px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-color); position: relative; }
         .card.full-width { grid-column: 1 / -1; }
         .chart { width: 100%; height: 380px; }
@@ -90,17 +97,18 @@
         <button id="btnPeriod10" class="active">10-Year <span>十年</span></button>
         <button id="btnPeriod5">5-Year <span>五年</span></button>
         <button id="btnYearly">Yearly <span>每年</span></button>
+        <button id="btnLyricist">Lyricist <span>填詞人</span></button>
     </div>
 </nav>
 
 <div class="container">
     <!-- Intro Section for EdUHK / CHI3565 Context -->
     <div class="project-intro" style="margin-bottom: 30px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-color);">
-        <h1 style="color: var(--primary); margin-top: 0; font-size: 2em; text-align: left;">數碼時代廣東歌歌詞分析 <br><span style="font-size: 0.6em; color: #666; font-weight: normal;">Cantonese Lyrics Analysis in the Digital Age</span></h1>
-        <p style="font-size: 1.1em;"><strong>主講 / Speaker：</strong><a href="https://chaak.net" target="_blank" style="color: var(--primary); text-decoration: underline;">劉擇明 Chaak Ming Lau</a> (香港教育大學 語言學及現代語言系 / 語言學及語言研究中心 EdUHK LML / CRLLS)</p>
-        <p><strong>背景 / Context：</strong>本頁面為香港教育大學「CHI3565 漢語修辭學」客席講堂的輔助教材，並為未來的「數碼人文 (Digital Humanities)」課程提供實例示範與研究平台。<br><span style="font-size: 0.9em; color: #555;">This page serves as supplementary material for the guest lecture of "CHI3565 Chinese Rhetoric" at EdUHK, and as a practical demonstration and research platform for future Digital Humanities courses.</span></p>
-        <p><strong>摘要 / Abstract：</strong>本項目運用數碼人文方法，以數據為本對 1986 至 2025 年間近千首香港發行的粵語流行歌進行計量分析。系統結合 NLP、詞庫模型分析 (如 LIWC) 及 AI 技術，從語音（聲調走向、押韻、疊字）、在用詞（文言/口語比例、詞彙多樣性）及內容（主題情感、地區投射）三大維度，科學化地探討香港流行音樂歌詞文本的演變特徵。<br><span style="font-size: 0.9em; color: #555;">This project applies Digital Humanities methods for a data-driven quantitative analysis of nearly a thousand Cantonese popular songs distributed in Hong Kong from 1986 to 2025. Combining NLP, lexicon-based models (e.g. LIWC), and AI techniques, the system scientifically explores the evolutionary characteristics of popular music lyrics in terms of phonetics/phonology (tone movements, rhymes, reduplication), lexis (Standard Written Chinese vs Spoken Cantonese, lexical diversity), and themes (emotions, geographic projections).</span></p>
-        <p style="margin-bottom: 0; color: var(--accent-1); font-weight: bold;">請透過下方功能表切換時期（十年、五年、每年），觀察各大語言與修辭指標的歷時變化與趨勢。<br><span style="font-size: 0.85em; font-weight: normal;">Please use the navigation menu below to toggle between time periods (10-Year, 5-Year, Yearly) to observe the diachronic changes and trends.</span></p>
+        <h1 style="color:var(--primary); margin-top:0; font-size:2em; text-align:left;">數碼時代廣東歌歌詞分析 <br><span style="font-size:0.6em; color:#666; font-weight:normal;">Cantonese Lyrics Analysis in the Digital Age</span></h1>
+<table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);"><strong>主講：</strong><a href="https://chaak.net" target="_blank" style="color:var(--primary); text-decoration:underline;">劉擇明 Chaak Ming Lau</a><br>香港教育大學 語言學及現代語言系 / 語言學及語言研究中心</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;"><strong>Speaker:</strong> <a href="https://chaak.net" target="_blank" style="color:var(--primary); text-decoration:underline;">Chaak Ming Lau</a><br>EdUHK, Dept of Linguistics &amp; Modern Languages / CRLLS</td></tr></table>
+<table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">背景：本頁面為香港教育大學「CHI3565 漢語修辭學」客席講堂的輔助教材，並為未來的「數碼人文 (Digital Humanities)」課程提供實例示範與研究平台。</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">Context: This page serves as supplementary material for the guest lecture of "CHI3565 Chinese Rhetoric" at EdUHK, and as a practical demonstration and research platform for future Digital Humanities courses.</td></tr></table>
+<table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">摘要：本項目運用數碼人文方法，以數據為本對 1986 至 2025 年間近千首香港發行的粵語流行歌進行計量分析。系統結合 NLP、詞庫模型分析 (如 LIWC) 及 AI 技術，從語音（聲調走向、押韻、疊字）、用詞（文言/口語比例、詞彙多樣性、人稱代詞）及內容（主題情感、地區投射）三大維度，科學化地探討香港流行音樂歌詞文本的演變特徵。</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">Abstract: This project applies Digital Humanities methods for a data-driven quantitative analysis of nearly a thousand Cantonese popular songs distributed in Hong Kong from 1986 to 2025. Combining NLP, lexicon-based models (e.g. LIWC), and AI techniques, the system explores the evolution of lyrics across phonetics (tone movements, rhymes, reduplication), lexis (register, lexical diversity, pronoun usage), and themes (emotions, geographic projections).</td></tr></table>
+<p style="margin-bottom:0; color:var(--accent-1); font-weight:bold;">請透過上方功能表切換時期（十年、五年、每年、填詞人），觀察各大語言與修辭指標的歷時變化與趨勢。<br><span style="font-size:0.85em; font-weight:normal; color:#555;">Use the navigation bar above to toggle between time periods (10-Year, 5-Year, Yearly) or Lyricist view to explore diachronic changes and trends.</span></p>
     </div>
 
     <div class="card full-width" style="margin-bottom: 25px;">
@@ -161,10 +169,10 @@
             <div id="listTTR" class="song-list-container"></div>
         </div>
 
-        <div class="card full-width">
+        <div class="card">
             <h3>Regional Mentions Heatmap <span class="bilingual">各區域提及次數熱圖</span></h3>
             <div class="bilingual" style="text-align: center;">Frequency of locations aggregated by Region (以區域整合的真實地名熱度)</div>
-            <div id="chartPlacesHeatmap" class="chart" style="height: 500px;"></div>
+            <div id="chartPlacesHeatmap" class="chart" style="height: 420px;"></div>
         </div>
 
         <div class="card">
@@ -180,6 +188,11 @@
             <div id="chartEnglish" class="chart"></div>
             <span class="toggle-btn" onclick="toggleSongs('listEnglish', 'english', true)">Toggle Top Songs</span>
             <div id="listEnglish" class="song-list-container"></div>
+        </div>
+        <div class="card">
+            <h3>Time Orientation <span class="bilingual">時間取向</span></h3>
+            <div class="bilingual" style="text-align: center;">Future-oriented vs Past/Nostalgia vs Present focus (未來 vs 懷舊 vs 當下取向)</div>
+            <div id="chartTimeOrientation" class="chart"></div>
         </div>
         <div class="card">
             <h3>Day vs Night <span class="bilingual">日與夜</span></h3>
@@ -217,48 +230,41 @@
         </div>
     </div>
     
-    <!-- Conclusion Section Mapping to Slides -->
+    <!-- Conclusion Section -->
     <div class="project-conclusion" style="margin-top: 40px; margin-bottom: 20px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-color);">
-        <h2 style="color: var(--primary); margin-top: 0; text-align: left;">結論與研究視角 / Conclusions & Research Perspectives</h2>
-        <p>比對 1986-2025 年的圖表走勢與本課堂提出的研究假設，我們能歸納出以下跨時代的語言及文學現象：<br><span style="font-size: 0.9em; color: #555;">By examining the trends from 1986 to 2025 against the hypotheses introduced in class, we can observe the following diachronic linguistic and literary phenomena:</span></p>
-        <ul style="line-height: 1.8; color: var(--text-color);">
-            <li style="margin-bottom: 10px;"><strong>語音的持續與變化 / Phonetic Constraints & Changes：</strong>由「旋律要求」驅使的語言特徵恆定不變（如為配合 0243 走向，相鄰聲調的「高聲調大跳躍」比例長期維持極低），這印證了「先曲後詞」的生產限制（假設 1 成立）。相對而言，不影響旋律結構的<strong>押韻</strong>比例逐漸提高（近十年接近 80%），而<strong>疊字</strong>作爲修辭手法未有消減。<br><span style="font-size: 0.9em; color: #555;">Features driven by melody restrictions remain constant (e.g., low ratio of large tonal jumps due to the constraints of the 0243 melodic contour), confirming the "melody-first" production (Hypothesis 1 verified). Meanwhile, "free" features like rhymes have gradually increased (near 80% recently) and reduplication remains prevalent.</span></li>
-            <li style="margin-bottom: 10px;"><strong>語體與修辭風格演化 / Evolution of Register & Rhetoric：</strong>隨着流行文化加速及時代變遷，宏觀數據顯示歌詞寫作減少了雕琢與文言、莊重成份，變得更貼近<strong>口語化與日常體</strong>（假設 3 成立）。同時，整體詞彙多樣性 (Type-Token Ratio, TTR) 及異常詞數量均反映有輕微下降趨勢。<br><span style="font-size: 0.9em; color: #555;">Macro data shows a reduction in elaborate, classical, or formal vocabulary, moving closer to spoken Cantonese and everyday language (Hypothesis 3 verified). Overall lexical diversity (TTR) and rare vocabulary exhibit a slight downward trend.</span></li>
-            <li style="margin-bottom: 10px;"><strong>主題意識與國際化進程 / Thematic Focus & Internationalization：</strong>出乎意料地，數據圖表顯示大部份廣東歌至今依然<strong>以浪漫愛情及失戀為絕對主要題材</strong>，並未如日本流行文化般出現明顯「由戀愛轉向自我肯定」的大規模轉移（假設 6 暫不成立）。在地名引用上，多局限於香港、台灣、日本及西方旅遊熱點，未見因國際視野提升而令文本發生深層的「主題國際化」（假設 5 暫不成立）。<br><span style="font-size: 0.9em; color: #555;">Contrary to expectations, Cantonese lyrics remain overwhelmingly dominated by romantic love and heartbreak themes, lacking the paradigm shift toward "self-affirmation" seen in Japanese pop (Hypothesis 6 unsubstantiated). Geographic references remain localized (Hong Kong, Taiwan, Japan, Europe), without deep thematic internationalization (Hypothesis 5 unsubstantiated).</span></li>
-            <li style="margin-bottom: 0;"><strong>情感波動 / Sentiment Fluctuations：</strong>從整套歌詞的情感分析分數 (Sentiment) 可見，歷年總體趨平穩，惟隨年代推進呈<strong>輕微而緩慢的向下（悲觀）趨勢</strong>。在晝夜意象比例上，寫「日」的歌曲數量仍持續多於寫「夜」。<br><span style="font-size: 0.9em; color: #555;">Overall sentiment scores remain relatively stable but indicate a slight, gradual downward (more pessimistic) trend over the decades. Regarding day/night imagery, songs referencing "day" still consistently outnumber those referencing "night".</span></li>
-        </ul>
-        <div style="margin-top: 25px; padding: 15px; background: var(--bg-color); border-left: 4px solid var(--accent-2); border-radius: 4px;">
-            <strong>總結 / Summary：</strong>藉由上述數據視覺化儀表板可見，數碼人文 (Digital Humanities) 方法能處理傳統文學分析難以涵蓋的大規模語料，發掘文本底層的語言特質與時代情感，並讓文科學生能通過 AI 輔助獨立進行大型文本探索與實證研究。<br><span style="font-size: 0.9em; color: #555;">As demonstrated by the dashboard, Digital Humanities methods can process large-scale corpora beyond the reach of traditional literary analysis, uncovering underlying linguistic traits and temporal sentiments. It empowers humanities students to conduct independent, large-scale textual exploration and empirical research with AI assistance.</span>
-        </div>
+        <h2 style="color:var(--primary); margin-top:0;">結論與研究視角 <span class="bilingual">Conclusions &amp; Research Perspectives</span></h2>
+<table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">比對 1986-2025 年的圖表走勢與本課堂提出的研究假設，我們能歸納出以下跨時代的語言及文學現象：</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">By examining the trends from 1986 to 2025 against the hypotheses introduced in class, we can observe the following diachronic linguistic and literary phenomena:</td></tr></table>
+<ul style="list-style: decimal; padding-left: 20px;">
+<li style="margin-bottom: 12px;"><table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">語音的持續與變化：由「旋律要求」驅使的語言特徵恆定不變（如為配合 0243 走向，相鄰聲調的「高聲調大跳躍」比例長期維持極低），這印證了「先曲後詞」的生產限制（假設 1 成立）。相對而言，不影響旋律結構的押韻比例逐漸提高（近十年接近 80%），而疊字作爲修辭手法未有消減。</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">Phonetic Constraints &amp; Changes: Features driven by melody restrictions remain constant (e.g., low ratio of large tonal jumps due to the constraints of the 0243 melodic contour), confirming the "melody-first" production (Hypothesis 1 verified). Meanwhile, "free" features like rhymes have gradually increased (near 80% recently) and reduplication remains prevalent.</td></tr></table></li>
+<li style="margin-bottom: 12px;"><table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">語體與修辭風格演化：隨着流行文化加速及時代變遷，宏觀數據顯示歌詞寫作減少了雕琢與文言、莊重成份，變得更貼近口語化與日常體（假設 3 成立）。同時，整體詞彙多樣性 (Type-Token Ratio, TTR) 及異常詞數量均反映有輕微下降趨勢。</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">Evolution of Register &amp; Rhetoric: Macro data shows a reduction in elaborate, classical, or formal vocabulary, moving closer to spoken Cantonese and everyday language (Hypothesis 3 verified). Overall lexical diversity (TTR) and rare vocabulary exhibit a slight downward trend.</td></tr></table></li>
+<li style="margin-bottom: 12px;"><table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">主題意識與國際化進程：出乎意料地，數據圖表顯示大部份廣東歌至今依然以浪漫愛情及失戀為絕對主要題材，並未如日本流行文化般出現明顯「由戀愛轉向自我肯定」的大規模轉移（假設 6 暫不成立）。在地名引用上，多局限於香港、台灣、日本及西方旅遊熱點，未見因國際視野提升而令文本發生深層的「主題國際化」（假設 5 暫不成立）。</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">Thematic Focus &amp; Internationalization: Contrary to expectations, Cantonese lyrics remain overwhelmingly dominated by romantic love and heartbreak themes, lacking the paradigm shift toward "self-affirmation" seen in Japanese pop (Hypothesis 6 unsubstantiated). Geographic references remain localized (Hong Kong, Taiwan, Japan, Europe), without deep thematic internationalization (Hypothesis 5 unsubstantiated).</td></tr></table></li>
+<li style="margin-bottom: 12px;"><table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">情感波動：從整套歌詞的情感分析分數 (Sentiment) 可見，歷年總體趨平穩，惟隨年代推進呈輕微而緩慢的向下（悲觀）趨勢。在晝夜意象比例上，寫「日」的歌曲數量仍持續多於寫「夜」。</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">Sentiment Fluctuations: Overall sentiment scores remain relatively stable but indicate a slight, gradual downward (more pessimistic) trend over the decades. Regarding day/night imagery, songs referencing "day" still consistently outnumber those referencing "night".</td></tr></table></li>
+</ul>
+<div style="background: var(--bg-color); padding: 15px; border-radius: 6px; border-left: 4px solid var(--accent-1); margin-top: 10px;"><table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">藉由上述數據視覺化儀表板可見，數碼人文 (Digital Humanities) 方法能處理傳統文學分析難以涵蓋的大規模語料，發掘文本底層的語言特質與時代情感，並讓文科學生能通過 AI 輔助獨立進行大型文本探索與實證研究。</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">As demonstrated by the dashboard, Digital Humanities methods can process large-scale corpora beyond the reach of traditional literary analysis, uncovering underlying linguistic traits and temporal sentiments. It empowers humanities students to conduct independent, large-scale textual exploration and empirical research with AI assistance.</td></tr></table></div>
     </div>
 
     <!-- Acknowledgements, Tools & References Section -->
     <div class="project-footer" style="margin-top: 20px; margin-bottom: 40px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-color);">
-        <h3 style="color: var(--primary); margin-top: 0; text-align: left;">鳴謝與使用工具 / Acknowledgements & Tools</h3>
-        <p style="font-size: 0.95em;">本研究項目使用了多種開源工具及自然語言處理（NLP）資源，特此鳴謝：<br><span style="font-size: 0.9em; color: #555;">This research project utilizes various open-source tools and Natural Language Processing (NLP) resources. We would like to acknowledge:</span></p>
-        <ul style="font-size: 0.9em; line-height: 1.6; color: var(--text-color);">
-            <li><strong>Cantonese Detect (<a href="https://github.com/CanCLID/cantonesedetect" target="_blank" style="color: var(--primary);">cantonese-detect</a>):</strong> 用於辨識歌詞中的粵語成份與書面語比例。<br><span style="color: #666;">Used to detect the proportion of explicit Cantonese components vs. Standard Written Chinese.</span></li>
-            <li><strong>spaCy:</strong> 工業級核心 NLP 庫，用於實體命名識別（Named Entity Recognition），以擷取地名。<br><span style="color: #666;">Industrial-strength NLP library used for Named Entity Recognition (NER) to extract geographical locations.</span></li>
-            <li><strong>LIWC-Canto / LIWC:</strong> 運用包含四萬多詞條的廣東話分類詞庫進行文本主題（如愛、日、夜）及情感分析。<br><span style="color: #666;">Applied for thematic (e.g. Love, Day, Night) and sentiment analysis using a Cantonese categorized lexicon of over 40,000 words.</span></li>
-            <li><strong>ToJyutping:</strong> 用於將漢字轉化為粵拼（Jyutping），協助進行聲調走向與押韻計量。<br><span style="color: #666;">Used to convert Chinese characters into Jyutping for tone movement and rhyme computations.</span></li>
-        </ul>
-
-        <h3 style="color: var(--primary); margin-top: 25px; text-align: left;">參考文獻 / References</h3>
-        <ul style="font-size: 0.85em; line-height: 1.6; color: #555;">
-            <li>Fung, A. Y. H., & Chik, A. (Eds.). (2020). <em>Made in Hong Kong: studies in popular music.</em> Routledge.</li>
-            <li>Lau, C.-M., Lau, M.& To, A. W. H. (2024). The extraction and fine-grained classification of written Cantonese materials through linguistic feature detection. In Proceedings of the 2nd Workshop on Resources and Technologies for Indigenous, Endangered and Lesser-resourced Languages in Eurasia (EURALI) @ LREC-COLING 2024 (pp. 24–29). ELRA and ICCL. https://aclanthology.org/2024.eurali-1.4/</li>
-            <li>Lee, Y. H. J. (2023). A corpus study of tone-melody correspondence in Cantopop, 2000–2020 (Doctoral dissertation, University of British Columbia).</li>
-            <li>朱耀偉 (2019). 《歲月如歌: 詞話香港粵語流行曲 (增訂版)》. 三聯書店（香港）有限公司.</li>
-            <li>黃湛森 (Wong, Jum-Sum James) (2003). 《粵語流行曲的發展與興衰：香港流行音樂研究（1949－1997）》. 香港大學博士論文.</li>
-        </ul>
-
-        <!-- TypeDuck Ad -->
-        <div style="margin-top: 30px; padding: 25px; background: rgba(194, 125, 92, 0.08); border: 2px dashed var(--accent-1); border-radius: 8px; text-align: center;">
-            <h3 style="color: var(--accent-1); margin-top: 0; font-size: 1.5em;">🦆 TypeDuck 粵拼中文輸入法</h3>
-            <p style="font-size: 1.05em; margin-bottom: 8px;"><strong>Cantonese Phonetic Input Method (Jyutping) with Minority Language Prompts</strong><br>設有少數族裔語言提示的粵拼中文輸入法 (EDB(LE)/P&R/CL/104)</p>
-            <p style="font-size: 0.95em; color: #555; margin-bottom: 20px;">支持普及粵語拼音，為少數族裔與本地學生提供便利的聯想字輸入方案！<br>Supporting Jyutping popularization and providing convenient predictive input solutions for ethnic minorities and local students!</p>
-            <a href="https://typeduck.hk" target="_blank" style="display: inline-block; padding: 10px 25px; background-color: var(--accent-1); color: white; text-decoration: none; border-radius: 4px; font-weight: bold; transition: background-color 0.2s;">了解更多 / Learn More</a>
-        </div>
+        <h3 style="color:var(--primary); margin-top:0;">鳴謝與使用工具 <span class="bilingual">Acknowledgements &amp; Tools</span></h3>
+<table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">本研究項目使用了多種開源工具及自然語言處理（NLP）資源，特此鳴謝：</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">This research project utilizes various open-source tools and Natural Language Processing (NLP) resources. We would like to acknowledge:</td></tr></table>
+<ul style="list-style: none; padding-left: 0;">
+<li style="margin-bottom: 8px;"><a href="https://github.com/CanCLID/cantonesedetect" target="_blank" style="color:var(--primary); text-decoration:underline;">Cantonese Detect</a> — 用於辨識歌詞中的粵語成份與書面語比例。 <span style="color:#555; font-size:0.9em;">(Used to detect the proportion of explicit Cantonese components vs. Standard Written Chinese.)</span></li>
+<li style="margin-bottom: 8px;"><strong>spaCy</strong> — 工業級核心 NLP 庫，用於實體命名識別（Named Entity Recognition），以擷取地名。 <span style="color:#555; font-size:0.9em;">(Industrial-strength NLP library used for Named Entity Recognition (NER) to extract geographical locations.)</span></li>
+<li style="margin-bottom: 8px;"><strong>LIWC-Canto / LIWC</strong> — 運用包含四萬多詞條的廣東話分類詞庫進行文本主題（如愛、日、夜）及情感分析。 <span style="color:#555; font-size:0.9em;">(Applied for thematic (e.g. Love, Day, Night) and sentiment analysis using a Cantonese categorized lexicon of over 40,000 words.)</span></li>
+<li style="margin-bottom: 8px;"><strong>ToJyutping</strong> — 用於將漢字轉化為粵拼（Jyutping），協助進行聲調走向與押韻計量。 <span style="color:#555; font-size:0.9em;">(Used to convert Chinese characters into Jyutping for tone movement and rhyme computations.)</span></li>
+</ul>
+<h3 style="color:var(--primary); margin-top:0;">參考文獻 <span class="bilingual">References</span></h3>
+<ul style="list-style: decimal; padding-left: 20px; font-size: 0.9em;">
+<li style="margin-bottom: 6px;">Fung, A. Y. H., &amp; Chik, A. (Eds.). (2020). Made in Hong Kong: studies in popular music. Routledge.</li>
+<li style="margin-bottom: 6px;">Lau, C.-M., Lau, M. &amp; To, A. W. H. (2024). The extraction and fine-grained classification of written Cantonese materials through linguistic feature detection. In Proceedings of the 2nd Workshop on Resources and Technologies for Indigenous, Endangered and Lesser-resourced Languages in Eurasia (EURALI) @ LREC-COLING 2024 (pp. 24-29). ELRA and ICCL. https://aclanthology.org/2024.eurali-1.4/</li>
+<li style="margin-bottom: 6px;">Lee, Y. H. J. (2023). A corpus study of tone-melody correspondence in Cantopop, 2000-2020 (Doctoral dissertation, University of British Columbia).</li>
+<li style="margin-bottom: 6px;">朱耀偉 (2019). 《歲月如歌: 詞話香港粵語流行曲 (增訂版)》. 三聯書店（香港）有限公司.</li>
+<li style="margin-bottom: 6px;">黃湛森 (Wong, Jum-Sum James) (2003). 《粵語流行曲的發展與興衰：香港流行音樂研究（1949－1997）》. 香港大學博士論文.</li>
+</ul>
+<div style="margin-top: 25px; padding: 20px; background: var(--bg-color); border-radius: 6px; border: 1px solid var(--border-color); text-align: center;"><h3 style="margin-top:0;"><a href="https://typeduck.hk" target="_blank" style="color:var(--primary); text-decoration:none;">🦆 TypeDuck 粵拼中文輸入法</a> <span class="bilingual">TypeDuck Cantonese Phonetic Input Method</span></h3>
+<p style="color:#666; font-size:0.9em; margin:5px 0;">設有少數族裔語言提示的粵拼中文輸入法 (EDB(LE)/P&amp;R/CL/104)<br><span style="color:#888; font-size:0.9em;">Cantonese Phonetic Input Method (Jyutping) with Minority Language Prompts</span></p>
+<p style="margin-bottom:0;">支持普及粵語拼音，為少數族裔與本地學生提供便利的聯想字輸入方案！<br><span style="color:#555; font-size:0.9em;">Supporting Jyutping popularization and providing convenient predictive input solutions for ethnic minorities and local students!</span></p>
+</div>
     </div>
 </div>
 
@@ -287,7 +293,8 @@
     const buttons = {
         '10': document.getElementById('btnPeriod10'),
         '5': document.getElementById('btnPeriod5'),
-        '1': document.getElementById('btnYearly')
+        '1': document.getElementById('btnYearly'),
+        'L': document.getElementById('btnLyricist')
     };
 
     function setMode(mode) {
@@ -300,6 +307,7 @@
     buttons['10'].addEventListener('click', () => setMode('10'));
     buttons['5'].addEventListener('click', () => setMode('5'));
     buttons['1'].addEventListener('click', () => setMode('1'));
+    buttons['L'].addEventListener('click', () => setMode('L'));
 
     // Palette
     const colors = {
@@ -315,8 +323,8 @@
         margin: { t: 20, b: 70, l: 45, r: 20 },
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
-        xaxis: { tickangle: -45, gridcolor: colors.grid, linecolor: '#ccc' },
-        yaxis: { gridcolor: colors.grid, linecolor: '#ccc' },
+        xaxis: { tickangle: -45, gridcolor: colors.grid, linecolor: '#ccc', fixedrange: true },
+        yaxis: { gridcolor: colors.grid, linecolor: '#ccc', fixedrange: true },
         hovermode: 'closest',
         showlegend: false
     };
@@ -327,18 +335,35 @@
         let labels, stats;
         if (currentMode === '10') { labels = data.labels_10; stats = data.stats_10; }
         else if (currentMode === '5') { labels = data.labels_5; stats = data.stats_5; }
-        else { labels = data.labels_yearly; stats = data.stats_yearly; }
+        else if (currentMode === 'L') { labels = data.labels_lyricist; stats = data.stats_lyricist; }
+        else { 
+            // Yearly: Convert years to strings to ensure consistent categorical axis behavior
+            labels = data.labels_yearly.map(String); 
+            stats = data.stats_yearly; 
+        }
         
-        const barConfig = { displayModeBar: false, responsive: true };
+        const barConfig = { displayModeBar: false, responsive: true, scrollZoom: false };
+        const isLyricist = currentMode === 'L';
+
+        // Helper: for lyricist mode, sort indices by a given yData array (descending)
+        function sortedIdx(yData) {
+            const idx = labels.map((_, i) => i);
+            if (!isLyricist) return idx;
+            return idx.sort((a, b) => yData[b] - yData[a]);
+        }
+        function reorder(arr, idx) { return idx.map(i => arr[i]); }
 
         function plotBarPerc(id, title, yData, color, topSongsArray, totalSongsArray) {
+            const si = sortedIdx(yData);
+            const xl = reorder(labels, si), yd = reorder(yData, si);
+            const ts = reorder(topSongsArray, si), tot = reorder(totalSongsArray, si);
             Plotly.react(id, [{
-                x: labels, y: yData, type: 'bar',
+                x: xl, y: yd, type: 'bar',
                 marker: { color: color },
-                customdata: labels.map((_, i) => [
-                    Math.round(yData[i] * totalSongsArray[i] / 100), // raw count
-                    totalSongsArray[i],
-                    topSongsArray[i]
+                customdata: xl.map((_, i) => [
+                    Math.round(yd[i] * tot[i] / 100),
+                    tot[i],
+                    ts[i]
                 ]),
                 hovertemplate: '%{x}<br><b>%{y:.1f}%</b> (%{customdata[0]} / %{customdata[1]} songs)%{customdata[2]}<extra></extra>'
             }], mergeLayout({ yaxis: { title: title, range: [0, 100] } }), barConfig);
@@ -350,47 +375,93 @@
         plotBarPerc('chartPlaces', '% of Songs', stats.place, colors.neutral, stats.top_songs.place, stats.total_songs);
         plotBarPerc('chartEnglish', '% of Songs', stats.english, colors.primary, stats.top_songs.english, stats.total_songs);
 
-        function createTrace(xData, yData, name, color, topSongsArray) {
+        function createTrace(xData, yData, name, color, topSongsArray, totArr) {
+            const tot = totArr || stats.total_songs;
             return {
                 x: xData, y: yData, name: name, type: 'bar', marker: {color: color},
                 customdata: xData.map((_, i) => [
-                    Math.round(yData[i] * stats.total_songs[i] / 100),
-                    stats.total_songs[i],
+                    Math.round(yData[i] * tot[i] / 100),
+                    tot[i],
                     topSongsArray[i]
                 ]),
                 hovertemplate: '%{x}<br>'+name+': <b>%{y:.1f}%</b> (%{customdata[0]} / %{customdata[1]} songs)%{customdata[2]}<extra></extra>'
             };
         }
 
-        Plotly.react('chartRegister', [
-            createTrace(labels, stats.cantonese_alot, 'Cantonese (A lot, ≥3)', colors.secondary, stats.top_songs.cantonese_alot),
-            createTrace(labels, stats.cantonese, 'Cantonese (Some, 1-2)', '#DEA88D', stats.top_songs.cantonese),
-            createTrace(labels, stats.neutral_swc, 'Standard/Neutral (0)', colors.neutral, stats.top_songs.neutral_swc)
-        ], mergeLayout({ barmode: 'stack', showlegend: true, legend: {orientation: 'h', y: 1.1}, yaxis: { title: '% of Songs', range: [0, 100] } }), barConfig);
+        // Register — sort by cantonese_alot in lyricist mode
+        {
+            const si = sortedIdx(stats.cantonese_alot);
+            const xl = reorder(labels, si), tot = reorder(stats.total_songs, si);
+            Plotly.react('chartRegister', [
+                createTrace(xl, reorder(stats.cantonese_alot, si), 'Cantonese (A lot, ≥3)', colors.secondary, reorder(stats.top_songs.cantonese_alot, si), tot),
+                createTrace(xl, reorder(stats.cantonese, si), 'Cantonese (Some, 1-2)', '#DEA88D', reorder(stats.top_songs.cantonese, si), tot),
+                createTrace(xl, reorder(stats.neutral_swc, si), 'Standard/Neutral (0)', colors.neutral, reorder(stats.top_songs.neutral_swc, si), tot)
+            ], mergeLayout({ barmode: 'stack', showlegend: true, legend: {orientation: 'h', y: 1.1}, yaxis: { title: '% of Songs', range: [0, 100] } }), barConfig);
+        }
         
-        Plotly.react('chartTTR', [{
-            x: labels, y: stats.ttr, type: 'scatter', mode: 'lines+markers',
-            marker: { size: 8, color: colors.primary }, line: { color: colors.primary, width: 2 },
-            hovertemplate: '%{x}<br><b>%{y:.3f}</b><extra></extra>'
-        }], mergeLayout({ yaxis: { title: 'Average TTR' } }), barConfig);
+        // TTR — sort by ttr in lyricist mode
+        {
+            const si = sortedIdx(stats.ttr);
+            Plotly.react('chartTTR', [{
+                x: reorder(labels, si), y: reorder(stats.ttr, si), type: isLyricist ? 'bar' : 'scatter', mode: 'lines+markers',
+                marker: { size: 8, color: colors.primary }, line: { color: colors.primary, width: 2 },
+                hovertemplate: '%{x}<br><b>%{y:.3f}</b><extra></extra>'
+            }], mergeLayout({ yaxis: { title: 'Average TTR' } }), barConfig);
+        }
         
-        Plotly.react('chartDayNight', [
-            createTrace(labels, stats.day, 'Day', colors.day, stats.top_songs.day),
-            createTrace(labels, stats.night, 'Night', colors.night, stats.top_songs.night),
-            createTrace(labels, stats.not_clear, 'Not Clear', colors.notClear, stats.top_songs.not_clear)
-        ], mergeLayout({ barmode: 'group', showlegend: true, legend: {orientation: 'h', y: 1.1}, yaxis: { title: '% of Songs', range: [0, 100] } }), barConfig);
+        // Day/Night — sort by day in lyricist mode
+        {
+            const si = sortedIdx(stats.day);
+            const xl = reorder(labels, si), tot = reorder(stats.total_songs, si);
+            Plotly.react('chartDayNight', [
+                createTrace(xl, reorder(stats.day, si), 'Day', colors.day, reorder(stats.top_songs.day, si), tot),
+                createTrace(xl, reorder(stats.night, si), 'Night', colors.night, reorder(stats.top_songs.night, si), tot),
+                createTrace(xl, reorder(stats.not_clear, si), 'Not Clear', colors.notClear, reorder(stats.top_songs.not_clear, si), tot)
+            ], mergeLayout({ barmode: 'group', showlegend: true, legend: {orientation: 'h', y: 1.1}, yaxis: { title: '% of Songs', range: [0, 100] } }), barConfig);
+        }
         
-        Plotly.react('chartLove', [
-            createTrace(labels, stats.love, 'Love', colors.love, stats.top_songs.love),
-            createTrace(labels, stats.other, 'Other', colors.other, stats.top_songs.other)
-        ], mergeLayout({ barmode: 'stack', showlegend: true, legend: {orientation: 'h', y: 1.1}, yaxis: { title: '% of Songs', range: [0, 100] } }), barConfig);
+        // Love — sort by love% in lyricist mode
+        {
+            const si = sortedIdx(stats.love);
+            const xl = reorder(labels, si), tot = reorder(stats.total_songs, si);
+            Plotly.react('chartLove', [
+                createTrace(xl, reorder(stats.love, si), 'Love', colors.love, reorder(stats.top_songs.love, si), tot),
+                createTrace(xl, reorder(stats.other, si), 'Other', colors.other, reorder(stats.top_songs.other, si), tot)
+            ], mergeLayout({ barmode: 'stack', showlegend: true, legend: {orientation: 'h', y: 1.1}, yaxis: { title: '% of Songs', range: [0, 100] } }), barConfig);
+        }
         
-        Plotly.react('chartSentiment', [{
-            x: labels, y: stats.sentiment_mean, type: 'scatter', mode: 'lines+markers',
-            error_y: { type: 'data', array: stats.sentiment_std, visible: true, color: colors.secondary, thickness: 1, width: 3 },
-            marker: { size: 8, color: colors.primary }, line: { color: colors.primary, width: 2 },
-            hovertemplate: 'Mean: %{y:.2f}<br>Std: ±%{error_y.array:.2f}<extra></extra>'
-        }], mergeLayout({ yaxis: { title: 'Score (-1 to 1)', range: [-1, 1] } }), barConfig);
+        // Sentiment — sort by sentiment_mean in lyricist mode
+        {
+            const si = sortedIdx(stats.sentiment_mean);
+            Plotly.react('chartSentiment', [{
+                x: reorder(labels, si), y: reorder(stats.sentiment_mean, si),
+                type: isLyricist ? 'bar' : 'scatter', mode: 'lines+markers',
+                error_y: { type: 'data', array: reorder(stats.sentiment_std, si), visible: true, color: colors.secondary, thickness: 1, width: 3 },
+                marker: { size: 8, color: colors.primary }, line: { color: colors.primary, width: 2 },
+                hovertemplate: 'Mean: %{y:.2f}<br>Std: ±%{error_y.array:.2f}<extra></extra>'
+            }], mergeLayout({ yaxis: { title: 'Score (-1 to 1)', range: [-1, 1] } }), barConfig);
+        }
+        
+        // Time Orientation (LIWC focuspast / focusfuture / focuspresent)
+        {
+            const timeColors = { focuspast: '#3E5A68', focusfuture: '#C27D5C', focuspresent: '#6A8A82' };
+            const timeNames = { focuspast: 'Past 懷舊', focusfuture: 'Future 未來', focuspresent: 'Present 當下' };
+            const si = sortedIdx(stats.time_focuspast);
+            const xl = reorder(labels, si);
+            const timeTraces = ['focuspast', 'focusfuture', 'focuspresent'].map(tk => ({
+                x: xl,
+                y: reorder(stats['time_' + tk], si),
+                name: timeNames[tk],
+                type: 'bar',
+                marker: { color: timeColors[tk] },
+                hovertemplate: '%{x}<br>' + timeNames[tk] + ': <b>%{y:.2f}%</b><extra></extra>'
+            }));
+            Plotly.react('chartTimeOrientation', timeTraces, mergeLayout({
+                barmode: 'group', showlegend: true, legend: {orientation: 'h', y: 1.15},
+                yaxis: { title: 'Avg % of words', gridcolor: colors.grid, linecolor: '#ccc', fixedrange: true },
+                margin: { t: 20, b: 70, l: 50, r: 20 }
+            }), barConfig);
+        }
         
         // Rhyme Breakdown - X is rhyme type, Y is song count
         const rhymeTraces = labels.map((period, idx) => ({
@@ -403,7 +474,9 @@
         }));
         
         Plotly.react('chartRhymeBreakdown', rhymeTraces, mergeLayout({ 
-            barmode: 'stack', showlegend: true, legend: {orientation: 'h', y: 1.15}, 
+            barmode: 'stack', 
+            showlegend: labels.length <= 15, // Hide legend if too many periods (e.g. Yearly)
+            legend: {orientation: 'h', y: 1.15}, 
             xaxis: { title: 'Rhyme Final (Type)', tickangle: 0 },
             yaxis: { title: 'Number of Songs' },
             margin: { t: 20, b: 60, l: 50, r: 20 }
@@ -426,7 +499,7 @@
                 [1.0, '#3E5A68']
             ],
             hovertemplate: '<b>%{y}</b><br>Period/Year: %{x}<br>Mentions: %{z}<extra></extra>'
-        }], Object.assign({}, layoutBase, {
+        }], mergeLayout({
             margin: { l: 150, r: 20, t: 20, b: 80 }, // increased bottom margin so angled text is not clipped
             xaxis: { tickangle: -45 },
             yaxis: { autorange: 'reversed', tickangle: 0 } 

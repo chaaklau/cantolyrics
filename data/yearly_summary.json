@@ -1437,7 +1437,7 @@
   "total_japanese": 0,
   "total_korean": 0,
   "places": {
-   "europe": 4
+   "europe": 3
   },
   "boxplot_data": {
    "char_ttr": [
@@ -5489,7 +5489,7 @@
   "total_japanese": 0,
   "total_korean": 0,
   "places": {
-   "europe": 6
+   "europe": 2
   },
   "boxplot_data": {
    "char_ttr": [
@@ -9701,7 +9701,7 @@
   "total_japanese": 0,
   "total_korean": 0,
   "places": {
-   "europe": 4
+   "europe": 7
   },
   "boxplot_data": {
    "char_ttr": [
@@ -10732,7 +10732,7 @@
   "total_korean": 0,
   "places": {
    "taiwan": 2,
-   "europe": 2
+   "europe": 3
   },
   "boxplot_data": {
    "char_ttr": [
@@ -13330,8 +13330,7 @@
   "total_japanese": 0,
   "total_korean": 0,
   "places": {
-   "europe": 2,
-   "japan": 1
+   "europe": 2
   },
   "boxplot_data": {
    "char_ttr": [

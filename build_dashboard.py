@@ -30,8 +30,226 @@ def load_data():
     
     return songs, lyrics_dict
 
+def load_content():
+    """Load structured content.md (field-based) and render bilingual HTML for all page sections."""
+    import re
+    content_path = os.path.join(os.path.dirname(__file__), 'content.md')
+    if not os.path.exists(content_path):
+        placeholder = "<p>Welcome to Cantonese Lyrics Analysis Dashboard</p>"
+        return {'intro': placeholder, 'conclusion': '', 'footer': ''}
+
+    with open(content_path, 'r', encoding='utf-8') as f:
+        raw = f.read()
+
+    # Parse sections: each starts with '# section_name'
+    sections = {}
+    current = None
+    for line in raw.split('\n'):
+        m = re.match(r'^#\s+(\S+)', line)
+        if m:
+            current = m.group(1)
+            sections[current] = {}
+            continue
+        if current is None:
+            continue
+        fm = re.match(r'^(\w+):\s*(.*)', line)
+        if fm:
+            sections[current][fm.group(1)] = fm.group(2).strip()
+
+    def esc(text):
+        return text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+
+    def bilingual_row(zh, en, **kw):
+        """Render a table row with zh_hk left, en right."""
+        bold = kw.get('bold', False)
+        zh_html = f'<strong>{esc(zh)}</strong>' if bold else esc(zh)
+        en_html = f'<strong>{esc(en)}</strong>' if bold else esc(en)
+        return (
+            '<table style="width:100%; border-collapse:collapse; margin-bottom:15px;">'
+            '<tr>'
+            '<td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">'
+            f'{zh_html}</td>'
+            '<td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">'
+            f'{en_html}</td>'
+            '</tr></table>'
+        )
+
+    def bilingual_heading(sec_key, tag='h2'):
+        """Render a bilingual heading from a section."""
+        s = sections.get(sec_key, {})
+        if not s:
+            return ''
+        return (
+            f'<{tag} style="color:var(--primary); margin-top:0;">'
+            f'{esc(s.get("zh_hk", ""))}'
+            f' <span class="bilingual">{esc(s.get("en", ""))}</span>'
+            f'</{tag}>'
+        )
+
+    # ── INTRO ──
+    intro_parts = []
+
+    t = sections.get('title', {})
+    if t:
+        intro_parts.append(
+            f'<h1 style="color:var(--primary); margin-top:0; font-size:2em; text-align:left;">'
+            f'{esc(t.get("zh_hk", ""))}'
+            f' <br><span style="font-size:0.6em; color:#666; font-weight:normal;">'
+            f'{esc(t.get("en", ""))}</span></h1>'
+        )
+
+    sp = sections.get('speaker', {})
+    af = sections.get('affiliation', {})
+    if sp:
+        link = sp.get('link', '')
+        link_open = f'<a href="{link}" target="_blank" style="color:var(--primary); text-decoration:underline;">' if link else ''
+        link_close = '</a>' if link else ''
+        zh_sp = esc(sp.get('zh_hk', ''))
+        en_sp = esc(sp.get('en', ''))
+        zh_af = esc(af.get('zh_hk', ''))
+        en_af = esc(af.get('en', ''))
+        intro_parts.append(
+            '<table style="width:100%; border-collapse:collapse; margin-bottom:15px;">'
+            '<tr>'
+            '<td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">'
+            f'<strong>{zh_sp.split("：")[0]}：</strong>{link_open}{zh_sp.split("：", 1)[-1]}{link_close}'
+            f'<br>{zh_af}</td>'
+            '<td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">'
+            f'<strong>{en_sp.split(": ")[0]}:</strong> {link_open}{en_sp.split(": ", 1)[-1]}{link_close}'
+            f'<br>{en_af}</td>'
+            '</tr></table>'
+        )
+
+    ctx = sections.get('context', {})
+    if ctx:
+        intro_parts.append(bilingual_row(
+            f'背景：{ctx.get("zh_hk", "")}',
+            f'Context: {ctx.get("en", "")}'
+        ))
+
+    ab = sections.get('abstract', {})
+    if ab:
+        intro_parts.append(bilingual_row(
+            f'摘要：{ab.get("zh_hk", "")}',
+            f'Abstract: {ab.get("en", "")}'
+        ))
+
+    ins = sections.get('instructions', {})
+    if ins:
+        intro_parts.append(
+            '<p style="margin-bottom:0; color:var(--accent-1); font-weight:bold;">'
+            f'{esc(ins.get("zh_hk", ""))}<br>'
+            f'<span style="font-size:0.85em; font-weight:normal; color:#555;">'
+            f'{esc(ins.get("en", ""))}</span></p>'
+        )
+
+    # ── CONCLUSION ──
+    conclusion_parts = []
+
+    conclusion_parts.append(bilingual_heading('conclusion_heading'))
+
+    ci = sections.get('conclusion_intro', {})
+    if ci:
+        conclusion_parts.append(bilingual_row(ci.get('zh_hk', ''), ci.get('en', '')))
+
+    # Numbered conclusion points
+    conclusion_parts.append('<ul style="list-style: decimal; padding-left: 20px;">')
+    for i in range(1, 10):
+        c = sections.get(f'conclusion_{i}', {})
+        if not c:
+            break
+        conclusion_parts.append(
+            '<li style="margin-bottom: 12px;">'
+            + bilingual_row(c.get('zh_hk', ''), c.get('en', ''))
+            + '</li>'
+        )
+    conclusion_parts.append('</ul>')
+
+    cs = sections.get('conclusion_summary', {})
+    if cs:
+        conclusion_parts.append(
+            '<div style="background: var(--bg-color); padding: 15px; border-radius: 6px; '
+            'border-left: 4px solid var(--accent-1); margin-top: 10px;">'
+            + bilingual_row(cs.get('zh_hk', ''), cs.get('en', ''))
+            + '</div>'
+        )
+
+    # ── FOOTER (Acknowledgements + Tools + References + TypeDuck) ──
+    footer_parts = []
+
+    # Acknowledgements heading + intro
+    footer_parts.append(bilingual_heading('acknowledgements_heading', 'h3'))
+    ai = sections.get('acknowledgements_intro', {})
+    if ai:
+        footer_parts.append(bilingual_row(ai.get('zh_hk', ''), ai.get('en', '')))
+
+    # Tools list
+    tool_keys = [k for k in sections if k.startswith('tool_')]
+    if tool_keys:
+        footer_parts.append('<ul style="list-style: none; padding-left: 0;">')
+        for tk in tool_keys:
+            tool = sections[tk]
+            name = esc(tool.get('name', tk.replace('tool_', '').title()))
+            link = tool.get('link', '')
+            name_html = f'<a href="{link}" target="_blank" style="color:var(--primary); text-decoration:underline;">{name}</a>' if link else f'<strong>{name}</strong>'
+            footer_parts.append(
+                f'<li style="margin-bottom: 8px;">{name_html} — '
+                f'{esc(tool.get("zh_hk", ""))}'
+                f' <span style="color:#555; font-size:0.9em;">({esc(tool.get("en", ""))})</span>'
+                f'</li>'
+            )
+        footer_parts.append('</ul>')
+
+    # References heading
+    footer_parts.append(bilingual_heading('references_heading', 'h3'))
+    ref_keys = sorted([k for k in sections if k.startswith('reference_')])
+    if ref_keys:
+        footer_parts.append(
+            '<ul style="list-style: decimal; padding-left: 20px; font-size: 0.9em;">'
+        )
+        for rk in ref_keys:
+            cite = sections[rk].get('cite', '')
+            if cite:
+                footer_parts.append(f'<li style="margin-bottom: 6px;">{esc(cite)}</li>')
+        footer_parts.append('</ul>')
+
+    # TypeDuck promo
+    td_h = sections.get('typeduck_heading', {})
+    td_s = sections.get('typeduck_subtitle', {})
+    td_d = sections.get('typeduck_description', {})
+    if td_h:
+        td_link = td_d.get('link', 'https://typeduck.hk')
+        footer_parts.append(
+            '<div style="margin-top: 25px; padding: 20px; background: var(--bg-color); '
+            'border-radius: 6px; border: 1px solid var(--border-color); text-align: center;">'
+            f'<h3 style="margin-top:0;"><a href="{td_link}" target="_blank" '
+            f'style="color:var(--primary); text-decoration:none;">'
+            f'🦆 {esc(td_h.get("zh_hk", ""))}</a>'
+            f' <span class="bilingual">{esc(td_h.get("en", ""))}</span></h3>'
+        )
+        if td_s:
+            footer_parts.append(
+                f'<p style="color:#666; font-size:0.9em; margin:5px 0;">'
+                f'{esc(td_s.get("zh_hk", ""))}<br>'
+                f'<span style="color:#888; font-size:0.9em;">{esc(td_s.get("en", ""))}</span></p>'
+            )
+        if td_d:
+            footer_parts.append(
+                f'<p style="margin-bottom:0;">'
+                f'{esc(td_d.get("zh_hk", ""))}<br>'
+                f'<span style="color:#555; font-size:0.9em;">{esc(td_d.get("en", ""))}</span></p>'
+            )
+        footer_parts.append('</div>')
+
+    return {
+        'intro': '\n'.join(intro_parts),
+        'conclusion': '\n'.join(conclusion_parts),
+        'footer': '\n'.join(footer_parts),
+    }
+
 def run():
     songs, lyrics_dict = load_data()
+    content = load_content()
         
     # 1. Descriptive Stats
     singers = {}
@@ -74,6 +292,9 @@ def run():
     song_db = []
     
     # Groupings
+    top_10_lyricist_names = [item['name'] for item in top_lyricists[:10]]
+    lyricist_groups = {name: [] for name in top_10_names} if (top_10_names := top_10_lyricist_names) else {}
+
     periods_10 = {'1986-<br>1995': [], '1996-<br>2005': [], '2006-<br>2015': [], '2016-<br>2025': []}
     periods_5 = {
         '1986-<br>1990': [], '1991-<br>1995': [], '1996-<br>2000': [], '2001-<br>2005': [],
@@ -84,6 +305,10 @@ def run():
     for s in songs:
         y = s.get('year')
         if not y: continue
+
+        l_name = s.get('lyricist')
+        if l_name and l_name in lyricist_groups:
+            lyricist_groups[l_name].append(s)
         
         th = s.get('themes', {})
         counts = th.get('counts', {})
@@ -135,6 +360,7 @@ def run():
     labels_10 = list(periods_10.keys())
     labels_5 = list(periods_5.keys())
     labels_yearly = sorted(list(yearly.keys()))
+    labels_lyricist = top_10_lyricist_names
     
     def calc_stats(groups_dict, labels):
         stats = {
@@ -145,6 +371,7 @@ def run():
             'love': [], 'other': [],
             'sentiment_mean': [], 'sentiment_std': [],
             'place': [], 'english': [],
+            'time_focuspast': [], 'time_focusfuture': [], 'time_focuspresent': [],
             'rhymes': {r: [] for r in top_rhymes_keys},
             'places_counts': {r: [] for r in all_regions},
             'top_songs': {
@@ -204,6 +431,11 @@ def run():
             
             ttrs = [s.get('lexical', {}).get('word_ttr', 0) for s in pset]
             stats['ttr'].append(float(np.mean(ttrs)) if ttrs else 0)
+            
+            # LIWC Time Orientation (avg normalised across songs in period)
+            for tkey in ['focuspast', 'focusfuture', 'focuspresent']:
+                vals = [s.get('lexical', {}).get('liwc', {}).get('normalised', {}).get(tkey, 0) for s in pset]
+                stats[f'time_{tkey}'].append(float(np.mean(vals)) * 100 if vals else 0)
             
             d_songs, n_songs, nc_songs = [], [], []
             for s in pset:
@@ -280,28 +512,34 @@ def run():
         'labels_10': labels_10,
         'labels_5': labels_5,
         'labels_yearly': labels_yearly,
+        'labels_lyricist': labels_lyricist,
         'stats_10': calc_stats(periods_10, labels_10),
         'stats_5': calc_stats(periods_5, labels_5),
         'stats_yearly': calc_stats(yearly, labels_yearly),
+        'stats_lyricist': calc_stats(lyricist_groups, labels_lyricist),
         'all_places': all_regions,
         'top_rhymes': top_rhymes_keys,
         'songs': song_db
     }
     
-    os.makedirs('web', exist_ok=True)
+    os.makedirs('docs', exist_ok=True)
     
-    with open('web/data.js', 'w', encoding='utf-8') as f:
+    with open('docs/data.js', 'w', encoding='utf-8') as f:
         f.write('const DB_DATA = ')
         json.dump(dashboard_data, f, ensure_ascii=False)
         f.write(';')
         
     with open('dashboard_template.html', 'r', encoding='utf-8') as f:
         template = f.read()
-    
-    with open('web/index.html', 'w', encoding='utf-8') as f:
+
+    template = template.replace('{{ INTRO_CONTENT }}', content['intro'])
+    template = template.replace('{{ CONCLUSION_CONTENT }}', content['conclusion'])
+    template = template.replace('{{ FOOTER_CONTENT }}', content['footer'])
+
+    with open('docs/index.html', 'w', encoding='utf-8') as f:
         f.write(template)
         
-    print(f"Dashboard generated at web/index.html")
+    print(f"Dashboard generated at docs/index.html")
 
 if __name__ == '__main__':
     run()

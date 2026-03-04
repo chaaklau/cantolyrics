@@ -121,6 +121,13 @@ def analyse_one_song(song):
                 'top_categories': lex['liwc']['top_categories'][:15],
                 'normalised': {k: round(v, 6) for k, v in lex['liwc']['normalised'].items()},
             },
+            'pronouns': {
+                'i': round(lex['liwc']['normalised'].get('i', 0), 6),
+                'we': round(lex['liwc']['normalised'].get('we', 0), 6),
+                'you': round(lex['liwc']['normalised'].get('you', 0), 6),
+                'shehe': round(lex['liwc']['normalised'].get('shehe', 0), 6),
+                'they': round(lex['liwc']['normalised'].get('they', 0), 6),
+            },
         }
     except Exception as e:
         result['lexical'] = {'error': str(e)}

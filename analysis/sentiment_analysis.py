@@ -25,10 +25,13 @@ _nlp = None
 
 
 def _get_nlp():
-    """Return cached spaCy model."""
+    """Return cached spaCy model. Prefers zh_core_web_trf for better NER."""
     global _nlp
     if _nlp is None:
-        _nlp = spacy.load('zh_core_web_sm')
+        try:
+            _nlp = spacy.load('zh_core_web_trf')
+        except OSError:
+            _nlp = spacy.load('zh_core_web_sm')
     return _nlp
 
 

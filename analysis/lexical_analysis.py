@@ -82,8 +82,9 @@ def morpheme_count(text):
 
 # ── Day/Night analysis ────────────────────────────────────────────────────
 
-def day_night_ratio(text):
-    """Count day vs night cue words using targeted temporal lists."""
+def day_night_ratio(text, liwc_agg=None):
+    """Count day vs night cue words using targeted temporal lists,
+    supplemented by LIWC time-related categories when available."""
     day_count = sum(text.count(w) for w in _DAY_CUES)
     night_count = sum(text.count(w) for w in _NIGHT_CUES)
     total = day_count + night_count
