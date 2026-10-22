@@ -50,7 +50,7 @@ def enrich_songs(songs, meta):
 
 def split_lines(lyrics):
     """Split lyrics into non-empty lines."""
-    return [l.strip() for l in lyrics.split('\n') if l.strip()]
+    return [line.strip() for line in lyrics.split('\n') if line.strip()]
 
 
 def split_sentences(lyrics):

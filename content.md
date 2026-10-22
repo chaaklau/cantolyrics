@@ -36,8 +36,8 @@ zh_hk: 語音的持續與變化：由「旋律要求」驅使的語言特徵恆�
 en: Phonetic Constraints & Changes: Features driven by melody restrictions remain constant (e.g., low ratio of large tonal jumps due to the constraints of the 0243 melodic contour), confirming the "melody-first" production (Hypothesis 1 verified). Meanwhile, "free" features like rhymes have gradually increased (near 80% recently) and reduplication remains prevalent.
 
 # conclusion_2
-zh_hk: 語體與修辭風格演化：隨着流行文化加速及時代變遷，宏觀數據顯示歌詞寫作減少了雕琢與文言、莊重成份，變得更貼近口語化與日常體（假設 3 成立）。同時，整體詞彙多樣性 (Type-Token Ratio, TTR) 及異常詞數量均反映有輕微下降趨勢。
-en: Evolution of Register & Rhetoric: Macro data shows a reduction in elaborate, classical, or formal vocabulary, moving closer to spoken Cantonese and everyday language (Hypothesis 3 verified). Overall lexical diversity (TTR) and rare vocabulary exhibit a slight downward trend.
+zh_hk: 語體與詞彙變化：圖表顯示近年明顯粵語表達較常見，但單憑語體分類不能推斷文學雕琢或莊重程度。1986–1995 至 2016–2025 年，每首歌的整體詞語 TTR 平均值由約 0.672 降至 0.609；同期歌詞變長、重複句比例上升。以固定 50 詞視窗計算的 MATTR-50 平均值則由約 0.826 升至 0.872（中間兩期約為 0.849、0.877）。兩種指標走勢不同，因此不能由整首歌的 TTR 下降斷言詞彙多樣性衰退；兩者亦不能證明罕見詞彙減少或寫作質素下降。
+en: Register & Vocabulary: Explicit Cantonese expressions are more common in recent songs, but register labels alone do not establish how elaborate or formal the writing is. From 1986–1995 to 2016–2025, mean per-song word TTR falls from about 0.672 to 0.609, alongside longer lyrics and more repeated lines. Mean MATTR-50, measured over fixed 50-word windows, instead rises from about 0.826 to 0.872 (the intervening periods average about 0.849 and 0.877). These differing patterns mean that falling whole-song TTR alone does not establish declining lexical diversity. Neither measure demonstrates a decline in rare vocabulary or writing quality.
 
 # conclusion_3
 zh_hk: 主題意識與國際化進程：出乎意料地，數據圖表顯示大部份廣東歌至今依然以浪漫愛情及失戀為絕對主要題材，並未如日本流行文化般出現明顯「由戀愛轉向自我肯定」的大規模轉移（假設 6 暫不成立）。在地名引用上，多局限於香港、台灣、日本及西方旅遊熱點，未見因國際視野提升而令文本發生深層的「主題國際化」（假設 5 暫不成立）。
@@ -98,6 +98,9 @@ cite: 朱耀偉 (2019). 《歲月如歌: 詞話香港粵語流行曲 (增訂版)
 
 # reference_5
 cite: 黃湛森 (Wong, Jum-Sum James) (2003). 《粵語流行曲的發展與興衰：香港流行音樂研究（1949－1997）》. 香港大學博士論文.
+
+# reference_6
+cite: Covington, M. A., & McFall, J. D. (2010). Cutting the Gordian Knot: The Moving-Average Type–Token Ratio (MATTR). Journal of Quantitative Linguistics, 17(2), 94–100. https://doi.org/10.1080/09296171003643098
 
 # typeduck_heading
 zh_hk: TypeDuck 粵拼中文輸入法

@@ -10,6 +10,8 @@ Supports:
   - Per-song LIWC profiling  (aggregated category proportions)
 """
 
+from __future__ import annotations
+
 import csv
 import os
 import re
@@ -192,7 +194,7 @@ def analyse_song_liwc(lyrics: str, liwc: LIWCDictionary | None = None) -> dict:
     if liwc is None:
         liwc = get_liwc_dict()
 
-    lines = [l.strip() for l in lyrics.split('\n') if l.strip()]
+    lines = [line.strip() for line in lyrics.split('\n') if line.strip()]
 
     # Aggregate across all lines
     total_words = 0

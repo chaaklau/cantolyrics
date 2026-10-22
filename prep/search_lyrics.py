@@ -128,11 +128,11 @@ def _find_largest_chinese_block(soup):
     best_score = 0
     for el in soup.find_all(['div', 'pre', 'p', 'td', 'section']):
         text = el.get_text('\n').strip()
-        lines = [l.strip() for l in text.split('\n') if l.strip()]
+        lines = [line.strip() for line in text.split('\n') if line.strip()]
         chinese_count = sum(1 for c in text if '\u4e00' <= c <= '\u9fff')
         # Good lyrics: mainly Chinese, many lines, short lines, not too long
         if chinese_count > 30 and 5 < len(lines) < 200:
-            avg_len = sum(len(l) for l in lines) / len(lines)
+            avg_len = sum(len(line) for line in lines) / len(lines)
             if avg_len < 40:
                 # Penalise very large blocks (probably the whole page)
                 score = chinese_count - max(0, len(lines) - 80) * 5
@@ -252,7 +252,7 @@ def main():
         urls = ddg_search(query)
 
         if not urls:
-            print(f'    -> No search results')
+            print('    -> No search results')
             failed += 1
             time.sleep(SEARCH_DELAY)
             continue
@@ -263,7 +263,7 @@ def main():
         lyrics, source_url = try_extract_lyrics(urls)
 
         if lyrics is None:
-            print(f'    -> Could not extract lyrics')
+            print('    -> Could not extract lyrics')
             failed += 1
             time.sleep(SEARCH_DELAY)
             continue

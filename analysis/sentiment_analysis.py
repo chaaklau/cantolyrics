@@ -10,13 +10,12 @@ Approach:
   - Places:    spaCy zh_core_web_sm NER (GPE, LOC, FAC) with fallback list
 """
 
-import re
 from collections import Counter, defaultdict
 
 from snownlp import SnowNLP
 import spacy
 
-from analysis.liwc_loader import get_liwc_dict, analyse_song_liwc
+from analysis.liwc_loader import analyse_song_liwc
 
 
 # ── Lazy-loaded singletons ────────────────────────────────────────────────
@@ -67,7 +66,7 @@ def sentiment_snownlp(lyrics: str) -> float:
 
     Returns value in [0, 1] where >0.5 = positive.
     """
-    lines = [l.strip() for l in lyrics.split('\n') if l.strip() and len(l.strip()) >= 2]
+    lines = [line.strip() for line in lyrics.split('\n') if line.strip() and len(line.strip()) >= 2]
     if not lines:
         return 0.5
     scores = []
@@ -216,7 +215,7 @@ def detect_places(lyrics: str) -> dict:
     all_known.update(_HK_PLACES_FALLBACK)
 
     # NER pass – process lyrics in chunks to handle long texts
-    lines = [l.strip() for l in lyrics.split('\n') if l.strip()]
+    lines = [line.strip() for line in lyrics.split('\n') if line.strip()]
     batch_size = 10
     for i in range(0, len(lines), batch_size):
         chunk = '\n'.join(lines[i:i + batch_size])

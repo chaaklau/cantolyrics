@@ -21,16 +21,10 @@ from collections import Counter, defaultdict
 sys.path.insert(0, os.path.dirname(__file__))
 
 from analysis.data_loader import (
-    load_songs, load_singer_metadata, enrich_songs,
-    split_lines, group_by_year, year_range,
-)
-from analysis.jyutping_analysis import (
-    analyse_tones, analyse_tone_jumps, analyse_rhyme,
-)
-from analysis.lexical_analysis import analyse_song_lexical
-from analysis.register_analysis import analyse_register
-from analysis.sentiment_analysis import (
-    analyse_sentiment, analyse_themes, detect_places,
+    load_songs,
+    load_singer_metadata,
+    enrich_songs,
+    split_lines,
 )
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
@@ -38,6 +32,19 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 
 def analyse_one_song(song):
     """Run all analyses on a single song. Returns analysis dict."""
+    from analysis.jyutping_analysis import (
+        analyse_tones,
+        analyse_tone_jumps,
+        analyse_rhyme,
+    )
+    from analysis.lexical_analysis import analyse_song_lexical
+    from analysis.register_analysis import analyse_register
+    from analysis.sentiment_analysis import (
+        analyse_sentiment,
+        analyse_themes,
+        detect_places,
+    )
+
     lyrics = song['Lyrics']
     if not lyrics or len(lyrics.strip()) < 10:
         return None
@@ -98,6 +105,9 @@ def analyse_one_song(song):
             'unique_chars': lex['unique_chars'],
             'char_ttr': round(lex['char_ttr'], 4),
             'word_ttr': round(lex['word_ttr'], 4),
+            'total_words': lex['total_words'],
+            'unique_words': lex['unique_words'],
+            'word_mattr_50': round(lex['word_mattr_50'], 4) if lex['word_mattr_50'] is not None else None,
             'morpheme_count': lex['morpheme_count'],
             'line_count': lex['line_count'],
             'avg_line_length': round(lex['avg_line_length'], 2),
@@ -109,6 +119,7 @@ def analyse_one_song(song):
                 'char_redup_examples': lex['reduplication']['char_reduplication_examples'],
                 'repeated_lines': lex['reduplication']['repeated_lines'],
                 'line_repetition_ratio': round(lex['reduplication']['line_repetition_ratio'], 4),
+                'top_repeated_words': lex['reduplication']['top_repeated_words'],
             },
             'non_chinese': {
                 'english_count': lex['non_chinese']['english_count'],
@@ -234,6 +245,7 @@ def compute_yearly_summary(song_results):
             'avg_line_count': round(avg(lambda s: safe_get(s, 'lexical', 'line_count')), 1),
             'avg_char_ttr': round(avg(lambda s: safe_get(s, 'lexical', 'char_ttr')), 4),
             'avg_word_ttr': round(avg(lambda s: safe_get(s, 'lexical', 'word_ttr')), 4),
+            'avg_word_mattr_50': round(avg(lambda s: safe_get(s, 'lexical', 'word_mattr_50')), 4),
             # Phonological
             'avg_rhyme_ratio': round(avg(lambda s: safe_get(s, 'rhyme', 'rhyme_ratio')), 4),
             'avg_entering_ratio': round(avg(lambda s: safe_get(s, 'rhyme', 'entering_ratio')), 4),
@@ -244,8 +256,14 @@ def compute_yearly_summary(song_results):
             'avg_classical_density': round(avg(lambda s: safe_get(s, 'classical', 'density')), 6),
             # Lexical
             'avg_english_words': round(avg(lambda s: safe_get(s, 'lexical', 'english_word_count')), 2),
-            'avg_redup_count': round(avg(lambda s: safe_get(s, 'lexical', 'reduplication', 'char_redup_count')), 2),
-            'avg_line_rep_ratio': round(avg(lambda s: safe_get(s, 'lexical', 'reduplication', 'line_repetition_ratio')), 4),
+            'avg_redup_count': round(
+                avg(lambda s: safe_get(s, 'lexical', 'reduplication', 'char_redup_count')),
+                2,
+            ),
+            'avg_line_rep_ratio': round(
+                avg(lambda s: safe_get(s, 'lexical', 'reduplication', 'line_repetition_ratio')),
+                4,
+            ),
             # LIWC match ratio
             'avg_liwc_match_ratio': round(avg(lambda s: safe_get(s, 'lexical', 'liwc', 'match_ratio')), 4),
             # Day/Night
@@ -264,11 +282,11 @@ def compute_yearly_summary(song_results):
             'total_korean': sum(safe_get(s, 'lexical', 'non_chinese', 'korean_count', default=0) for s in songs),
             # Places
             'places': defaultdict(int),
-
             # ── Per-song value arrays for boxplots ──
             'boxplot_data': {
                 'char_ttr': collect(lambda s: safe_get(s, 'lexical', 'char_ttr')),
                 'word_ttr': collect(lambda s: safe_get(s, 'lexical', 'word_ttr')),
+                'word_mattr_50': collect(lambda s: safe_get(s, 'lexical', 'word_mattr_50')),
                 'total_chars': collect(lambda s: safe_get(s, 'lexical', 'total_chars')),
                 'sentiment_score': collect(lambda s: safe_get(s, 'sentiment', 'score')),
                 'snownlp_score': collect(lambda s: safe_get(s, 'sentiment', 'snownlp_score')),
@@ -282,11 +300,18 @@ def compute_yearly_summary(song_results):
         }
 
         # Aggregate emotions
-        emotion_keys = ['joy', 'sadness', 'anger', 'love', 'anxiety', 'nostalgia', 'loneliness', 'hope']
+        emotion_keys = [
+            'joy',
+            'sadness',
+            'anger',
+            'love',
+            'anxiety',
+            'nostalgia',
+            'loneliness',
+            'hope',
+        ]
         for ek in emotion_keys:
-            summary['emotion_totals'][ek] = sum(
-                safe_get(s, 'sentiment', 'emotions', ek, default=0) for s in songs
-            )
+            summary['emotion_totals'][ek] = sum(safe_get(s, 'sentiment', 'emotions', ek, default=0) for s in songs)
 
         # Aggregate places
         for s in songs:
