@@ -13,9 +13,7 @@ Also flag: unusual sources, very long/short lyrics, etc.
 
 import json
 import re
-import requests
 from urllib.parse import unquote
-from bs4 import BeautifulSoup
 
 with open('google_lyrics.json', 'r', encoding='utf-8') as f:
     records = json.load(f)
@@ -60,7 +58,7 @@ def title_from_kkbox_lyrics(lyric_text):
 
 def title_from_first_lines(lyric_text, expected_title):
     """Check if a different song title appears in the first few lines."""
-    lines = [l.strip() for l in lyric_text.split('\n') if l.strip()]
+    lines = [line.strip() for line in lyric_text.split('\n') if line.strip()]
     # Look for patterns like "Song Title - Artist" or "《Song Title》"
     for line in lines[:5]:
         m = re.search(r'《(.+?)》', line)
@@ -77,7 +75,7 @@ for rec in records:
     singer = rec['info']['歌手'][0] if rec['info']['歌手'] else ''
     url = rec['url']
     lyric = rec['lyric']
-    lines = [l.strip() for l in lyric.split('\n') if l.strip()]
+    lines = [line.strip() for line in lyric.split('\n') if line.strip()]
     line_count = len(lines)
     n_title = normalise(title)
 

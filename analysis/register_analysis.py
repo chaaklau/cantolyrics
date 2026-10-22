@@ -19,7 +19,6 @@ import re
 from collections import Counter
 from cantonesedetect import CantoneseDetector
 
-from analysis.liwc_loader import get_liwc_dict
 
 
 # ── Cantonese detection ───────────────────────────────────────────────────
@@ -37,7 +36,7 @@ def classify_line(line):
 
 def analyse_canto_swc(lyrics):
     """Classify every line and return aggregate statistics."""
-    lines = [l.strip() for l in lyrics.split('\n') if l.strip()]
+    lines = [line.strip() for line in lyrics.split('\n') if line.strip()]
     classifications = []
     for line in lines:
         cls = classify_line(line)

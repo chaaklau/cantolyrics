@@ -41,7 +41,7 @@ def extract_meta(html):
     if info_m:
         label_text = re.sub(r'<[^>]+>', '', info_m.group(2)).strip()
         if label_text:
-            labels = [l.strip() for l in re.split(r'[、,，]', label_text) if l.strip()]
+            labels = [line.strip() for line in re.split(r'[、,，]', label_text) if line.strip()]
 
     return title, singer, labels
 

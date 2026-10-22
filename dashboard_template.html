@@ -105,13 +105,14 @@
     <!-- Intro Section for EdUHK / CHI3565 Context -->
     <div class="project-intro" style="margin-bottom: 30px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border-color);">
         {{ INTRO_CONTENT }}
+        <p class="bilingual">Updated / 更新：<time datetime="{{ UPDATED_AT_ISO }}">{{ UPDATED_AT_DISPLAY }}</time><br>TTR interpretation reviewed; MATTR-50 comparison added. / 已覆核 TTR 結果解讀，並加入 MATTR-50 比較。</p>
     </div>
 
     <div class="card full-width" style="margin-bottom: 25px;">
         <div class="stats-box">
             <div class="stat-item">
                 <div class="value" id="statTotal">--</div>
-                <div class="label">Total SongsAnalyzed <span>總數量</span></div>
+                <div class="label">Total Songs Analyzed <span>總數量</span></div>
             </div>
             <div class="stat-item">
                 <div class="value" id="statYears">--</div>
@@ -159,10 +160,16 @@
         </div>
         <div class="card">
             <h3>Lexical Diversity (TTR) <span class="bilingual">詞彙多樣性</span></h3>
-            <div class="bilingual" style="text-align: center;">Type-Token Ratio (數值越高代表用詞越豐富)</div>
+            <div class="bilingual" style="text-align: center;">Mean per-song word TTR and MATTR-50 / 每首歌的詞語 TTR 及 MATTR-50 平均值</div>
+            <details class="bilingual">
+                <summary>Method and interpretation / 計算方法與解讀</summary>
+                <p>TTR = unique words ÷ total words. Longer lyrics and repeated choruses can lower TTR. MATTR-50 averages TTR over all overlapping 50-word windows; songs with fewer than 50 words are excluded from MATTR only. Neither measure indicates rare vocabulary or writing quality.<br>TTR ＝ 不同詞語數 ÷ 總詞語數。歌詞長度及副歌重複會影響 TTR。MATTR-50 為所有連續 50 詞視窗的 TTR 平均值；少於 50 詞的歌曲只從 MATTR 排除。兩者均不衡量罕見詞彙或寫作質素。</p>
+            </details>
             <div id="chartTTR" class="chart"></div>
             <span class="toggle-btn" onclick="toggleSongs('listTTR', 'ttr', true)">Toggle Top Songs</span>
             <div id="listTTR" class="song-list-container"></div>
+            <span class="toggle-btn" onclick="toggleSongs('listMATTR', 'mattr_50', true)">Top MATTR-50 Songs</span>
+            <div id="listMATTR" class="song-list-container"></div>
         </div>
 
         <div class="card">
@@ -298,7 +305,12 @@
         showlegend: false
     };
     
-    const mergeLayout = (extra) => Object.assign({}, layoutBase, extra);
+    const mergeLayout = (extra) => ({
+        ...layoutBase, ...extra,
+        xaxis: { ...layoutBase.xaxis, ...extra.xaxis },
+        yaxis: { ...layoutBase.yaxis, ...extra.yaxis },
+        margin: { ...layoutBase.margin, ...extra.margin }
+    });
 
     function renderCharts() {
         let labels, stats;
@@ -318,7 +330,7 @@
         function sortedIdx(yData) {
             const idx = labels.map((_, i) => i);
             if (!isLyricist) return idx;
-            return idx.sort((a, b) => yData[b] - yData[a]);
+            return idx.sort((a, b) => (yData[b] ?? -Infinity) - (yData[a] ?? -Infinity));
         }
         function reorder(arr, idx) { return idx.map(i => arr[i]); }
 
@@ -371,11 +383,21 @@
         // TTR — sort by ttr in lyricist mode
         {
             const si = sortedIdx(stats.ttr);
-            Plotly.react('chartTTR', [{
-                x: reorder(labels, si), y: reorder(stats.ttr, si), type: isLyricist ? 'bar' : 'scatter', mode: 'lines+markers',
-                marker: { size: 8, color: colors.primary }, line: { color: colors.primary, width: 2 },
-                hovertemplate: '%{x}<br><b>%{y:.3f}</b><extra></extra>'
-            }], mergeLayout({ yaxis: { title: 'Average TTR' } }), barConfig);
+            const traces = [
+                ['ttr', 'Whole-song TTR', colors.primary],
+                ['mattr_50', 'MATTR-50', colors.secondary]
+            ].map(([key, name, color]) => ({
+                name,
+                x: reorder(labels, si), y: reorder(stats[key], si),
+                customdata: reorder(stats[key + '_song_count'], si),
+                type: isLyricist ? 'bar' : 'scatter', mode: 'lines+markers',
+                marker: { size: 8, color }, line: { color, width: 2 },
+                hovertemplate: '%{x}<br><b>%{y:.3f}</b><br>Valid songs: %{customdata}<extra>%{fullData.name}</extra>'
+            }));
+            Plotly.react('chartTTR', traces, mergeLayout({
+                yaxis: { title: 'Mean per-song ratio', range: [0, 1] },
+                barmode: 'group', showlegend: true, legend: { orientation: 'h', y: 1.15 }
+            }), barConfig);
         }
         
         // Day/Night — sort by day in lyricist mode
@@ -482,17 +504,24 @@
             div.style.display = 'none';
         } else {
             div.style.display = 'block';
-            let sorted = [...data.songs].filter(s => s.metrics[metric] !== undefined && s.metrics[metric] !== null);
+            const sorted = data.songs.filter(s => Number.isFinite(s.metrics[metric]));
             sorted.sort((a, b) => desc ? b.metrics[metric] - a.metrics[metric] : a.metrics[metric] - b.metrics[metric]);
             
             const top10 = sorted.slice(0, 10);
-            div.innerHTML = top10.map((s, i) => `
-                <div class="song-item" onclick='showLyrics(${JSON.stringify(s.id)})'>
-                    <span>${i+1}. ${s.title} (${s.year}) - ${s.singer}</span>
-                    <strong style="color:var(--primary)">${Number(s.metrics[metric]).toFixed(2)}</strong>
-                </div>
-            `).join('');
-            if (top10.length === 0) div.innerHTML = "<div>No data available</div>";
+            div.replaceChildren();
+            for (const [i, song] of top10.entries()) {
+                const item = document.createElement('div');
+                item.className = 'song-item';
+                item.addEventListener('click', () => showLyrics(song.id));
+                const title = document.createElement('span');
+                title.textContent = `${i + 1}. ${song.title} (${song.year}) - ${song.singer}`;
+                const value = document.createElement('strong');
+                value.style.color = 'var(--primary)';
+                value.textContent = song.metrics[metric].toFixed(2);
+                item.append(title, value);
+                div.append(item);
+            }
+            if (top10.length === 0) div.textContent = 'No data available';
         }
     }
 

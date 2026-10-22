@@ -17,7 +17,8 @@ import re
 from collections import Counter
 import jieba
 
-from analysis.liwc_loader import get_liwc_dict, analyse_song_liwc
+
+MATTR_WINDOW = 50
 
 
 # ── Day/Night cues (minimal targeted sets for temporal sub-dimension) ─────
@@ -52,12 +53,14 @@ def char_ttr(text):
 
 # ── Word-level analysis (jieba) ───────────────────────────────────────────
 
+
 def segment_words(text):
-    """Segment text into words using jieba. Returns list of words."""
-    # Remove non-CJK and non-alpha
-    clean = re.sub(r'[^\u4e00-\u9fff\w]', ' ', text)
-    words = list(jieba.cut(clean))
-    return [w.strip() for w in words if w.strip() and len(w.strip()) > 0]
+    """Segment CJK/Latin text with jieba; exclude digits and punctuation.
+
+    Latin tokens are case-insensitive. Repeated lines are retained.
+    """
+    clean = re.sub(r'[^\u4e00-\u9fffA-Za-z]', ' ', text)
+    return [word.strip().casefold() for word in jieba.cut(clean) if word.strip()]
 
 
 def word_frequency(text):
@@ -68,10 +71,41 @@ def word_frequency(text):
 
 def word_ttr(text):
     """Type-Token Ratio at word level."""
+    return word_diversity(text)['word_ttr']
+
+
+def moving_average_ttr(words, window=MATTR_WINDOW):
+    """Mean TTR of all overlapping fixed-size windows; None if too short.
+
+    A short song is excluded rather than measured with a different window.
+    """
+    if window <= 0:
+        raise ValueError('MATTR window must be positive')
+    if len(words) < window:
+        return None
+    counts = Counter(words[:window])
+    diversity_sum = len(counts)
+    for i in range(window, len(words)):
+        outgoing = words[i - window]
+        counts[outgoing] -= 1
+        if counts[outgoing] == 0:
+            del counts[outgoing]
+        counts[words[i]] += 1
+        diversity_sum += len(counts)
+    return diversity_sum / (window * (len(words) - window + 1))
+
+
+def word_diversity(text):
+    """Whole-song TTR and MATTR-50 from the same normalized word tokens."""
     words = segment_words(text)
-    if not words:
-        return 0
-    return len(set(words)) / len(words)
+    total = len(words)
+    unique = len(set(words))
+    return {
+        'total_words': total,
+        'unique_words': unique,
+        'word_ttr': unique / total if total else 0,
+        'word_mattr_50': moving_average_ttr(words),
+    }
 
 
 def morpheme_count(text):
@@ -81,6 +115,7 @@ def morpheme_count(text):
 
 
 # ── Day/Night analysis ────────────────────────────────────────────────────
+
 
 def day_night_ratio(text, liwc_agg=None):
     """Count day vs night cue words using targeted temporal lists,
@@ -98,6 +133,7 @@ def day_night_ratio(text, liwc_agg=None):
 
 # ── Reduplication / repetition analysis ───────────────────────────────────
 
+
 def find_reduplication(text):
     """Find single-char reduplication (疊字) like AA patterns.
     Returns list of (char, count) pairs."""
@@ -110,21 +146,20 @@ def find_reduplication(text):
 def find_word_repetition(lyrics):
     """Find repeated words/phrases in lyrics.
     Returns dict with char_reduplication, word_repetition, line_repetition."""
-    lines = [l.strip() for l in lyrics.split('\n') if l.strip()]
+    lines = [line.strip() for line in lyrics.split('\n') if line.strip()]
 
     # Character-level reduplication (AA)
     char_redup = find_reduplication(lyrics)
 
     # Line repetition
     line_counter = Counter(lines)
-    repeated_lines = {l: c for l, c in line_counter.items() if c > 1}
+    repeated_lines = {line: c for line, c in line_counter.items() if c > 1}
 
     # Word-level repetition (segmented)
     words = segment_words(lyrics)
     word_counter = Counter(words)
     # Filter to multi-char words appearing 3+ times
-    repeated_words = {w: c for w, c in word_counter.items()
-                      if len(w) > 1 and c >= 3}
+    repeated_words = {w: c for w, c in word_counter.items() if len(w) > 1 and c >= 3}
 
     return {
         'char_reduplication_count': sum(char_redup.values()),
@@ -138,6 +173,7 @@ def find_word_repetition(lyrics):
 
 
 # ── Non-CJK content detection ────────────────────────────────────────────
+
 
 def count_english_words(text):
     """Count English/alphabetic words in lyrics."""
@@ -172,9 +208,12 @@ def detect_non_chinese(text):
 
 # ── Aggregate per-song analysis ──────────────────────────────────────────
 
+
 def analyse_song_lexical(lyrics):
     """Run all lexical analyses on one song's lyrics."""
-    lines = [l.strip() for l in lyrics.split('\n') if l.strip()]
+    from analysis.liwc_loader import analyse_song_liwc
+
+    lines = [line.strip() for line in lyrics.split('\n') if line.strip()]
     total_chars = total_char_count(lyrics)
 
     # LIWC profiling
@@ -184,7 +223,7 @@ def analyse_song_lexical(lyrics):
         'total_chars': total_chars,
         'unique_chars': unique_char_count(lyrics),
         'char_ttr': char_ttr(lyrics),
-        'word_ttr': word_ttr(lyrics),
+        **word_diversity(lyrics),
         'morpheme_count': morpheme_count(lyrics),
         'line_count': len(lines),
         'avg_line_length': total_chars / len(lines) if lines else 0,

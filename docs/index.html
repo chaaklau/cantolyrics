@@ -109,13 +109,14 @@
 <table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">背景：本頁面為香港教育大學「CHI3565 漢語修辭學」客席講堂的輔助教材，並為未來的「數碼人文 (Digital Humanities)」課程提供實例示範與研究平台。</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">Context: This page serves as supplementary material for the guest lecture of "CHI3565 Chinese Rhetoric" at EdUHK, and as a practical demonstration and research platform for future Digital Humanities courses.</td></tr></table>
 <table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">摘要：本項目運用數碼人文方法，以數據為本對 1986 至 2025 年間近千首香港發行的粵語流行歌進行計量分析。系統結合 NLP、詞庫模型分析 (如 LIWC) 及 AI 技術，從語音（聲調走向、押韻、疊字）、用詞（文言/口語比例、詞彙多樣性、人稱代詞）及內容（主題情感、地區投射）三大維度，科學化地探討香港流行音樂歌詞文本的演變特徵。</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">Abstract: This project applies Digital Humanities methods for a data-driven quantitative analysis of nearly a thousand Cantonese popular songs distributed in Hong Kong from 1986 to 2025. Combining NLP, lexicon-based models (e.g. LIWC), and AI techniques, the system explores the evolution of lyrics across phonetics (tone movements, rhymes, reduplication), lexis (register, lexical diversity, pronoun usage), and themes (emotions, geographic projections).</td></tr></table>
 <p style="margin-bottom:0; color:var(--accent-1); font-weight:bold;">請透過上方功能表切換時期（十年、五年、每年、填詞人），觀察各大語言與修辭指標的歷時變化與趨勢。<br><span style="font-size:0.85em; font-weight:normal; color:#555;">Use the navigation bar above to toggle between time periods (10-Year, 5-Year, Yearly) or Lyricist view to explore diachronic changes and trends.</span></p>
+        <p class="bilingual">Updated / 更新：<time datetime="2026-10-22T22:17:38+08:00">2026-10-22 22:17:38 HKT (UTC+08:00)</time><br>TTR interpretation reviewed; MATTR-50 comparison added. / 已覆核 TTR 結果解讀，並加入 MATTR-50 比較。</p>
     </div>
 
     <div class="card full-width" style="margin-bottom: 25px;">
         <div class="stats-box">
             <div class="stat-item">
                 <div class="value" id="statTotal">--</div>
-                <div class="label">Total SongsAnalyzed <span>總數量</span></div>
+                <div class="label">Total Songs Analyzed <span>總數量</span></div>
             </div>
             <div class="stat-item">
                 <div class="value" id="statYears">--</div>
@@ -163,10 +164,16 @@
         </div>
         <div class="card">
             <h3>Lexical Diversity (TTR) <span class="bilingual">詞彙多樣性</span></h3>
-            <div class="bilingual" style="text-align: center;">Type-Token Ratio (數值越高代表用詞越豐富)</div>
+            <div class="bilingual" style="text-align: center;">Mean per-song word TTR and MATTR-50 / 每首歌的詞語 TTR 及 MATTR-50 平均值</div>
+            <details class="bilingual">
+                <summary>Method and interpretation / 計算方法與解讀</summary>
+                <p>TTR = unique words ÷ total words. Longer lyrics and repeated choruses can lower TTR. MATTR-50 averages TTR over all overlapping 50-word windows; songs with fewer than 50 words are excluded from MATTR only. Neither measure indicates rare vocabulary or writing quality.<br>TTR ＝ 不同詞語數 ÷ 總詞語數。歌詞長度及副歌重複會影響 TTR。MATTR-50 為所有連續 50 詞視窗的 TTR 平均值；少於 50 詞的歌曲只從 MATTR 排除。兩者均不衡量罕見詞彙或寫作質素。</p>
+            </details>
             <div id="chartTTR" class="chart"></div>
             <span class="toggle-btn" onclick="toggleSongs('listTTR', 'ttr', true)">Toggle Top Songs</span>
             <div id="listTTR" class="song-list-container"></div>
+            <span class="toggle-btn" onclick="toggleSongs('listMATTR', 'mattr_50', true)">Top MATTR-50 Songs</span>
+            <div id="listMATTR" class="song-list-container"></div>
         </div>
 
         <div class="card">
@@ -236,7 +243,7 @@
 <table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">比對 1986-2025 年的圖表走勢與本課堂提出的研究假設，我們能歸納出以下跨時代的語言及文學現象：</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">By examining the trends from 1986 to 2025 against the hypotheses introduced in class, we can observe the following diachronic linguistic and literary phenomena:</td></tr></table>
 <ul style="list-style: decimal; padding-left: 20px;">
 <li style="margin-bottom: 12px;"><table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">語音的持續與變化：由「旋律要求」驅使的語言特徵恆定不變（如為配合 0243 走向，相鄰聲調的「高聲調大跳躍」比例長期維持極低），這印證了「先曲後詞」的生產限制（假設 1 成立）。相對而言，不影響旋律結構的押韻比例逐漸提高（近十年接近 80%），而疊字作爲修辭手法未有消減。</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">Phonetic Constraints &amp; Changes: Features driven by melody restrictions remain constant (e.g., low ratio of large tonal jumps due to the constraints of the 0243 melodic contour), confirming the "melody-first" production (Hypothesis 1 verified). Meanwhile, "free" features like rhymes have gradually increased (near 80% recently) and reduplication remains prevalent.</td></tr></table></li>
-<li style="margin-bottom: 12px;"><table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">語體與修辭風格演化：隨着流行文化加速及時代變遷，宏觀數據顯示歌詞寫作減少了雕琢與文言、莊重成份，變得更貼近口語化與日常體（假設 3 成立）。同時，整體詞彙多樣性 (Type-Token Ratio, TTR) 及異常詞數量均反映有輕微下降趨勢。</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">Evolution of Register &amp; Rhetoric: Macro data shows a reduction in elaborate, classical, or formal vocabulary, moving closer to spoken Cantonese and everyday language (Hypothesis 3 verified). Overall lexical diversity (TTR) and rare vocabulary exhibit a slight downward trend.</td></tr></table></li>
+<li style="margin-bottom: 12px;"><table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">語體與詞彙變化：圖表顯示近年明顯粵語表達較常見，但單憑語體分類不能推斷文學雕琢或莊重程度。1986–1995 至 2016–2025 年，每首歌的整體詞語 TTR 平均值由約 0.672 降至 0.609；同期歌詞變長、重複句比例上升。以固定 50 詞視窗計算的 MATTR-50 平均值則由約 0.826 升至 0.872（中間兩期約為 0.849、0.877）。兩種指標走勢不同，因此不能由整首歌的 TTR 下降斷言詞彙多樣性衰退；兩者亦不能證明罕見詞彙減少或寫作質素下降。</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">Register &amp; Vocabulary: Explicit Cantonese expressions are more common in recent songs, but register labels alone do not establish how elaborate or formal the writing is. From 1986–1995 to 2016–2025, mean per-song word TTR falls from about 0.672 to 0.609, alongside longer lyrics and more repeated lines. Mean MATTR-50, measured over fixed 50-word windows, instead rises from about 0.826 to 0.872 (the intervening periods average about 0.849 and 0.877). These differing patterns mean that falling whole-song TTR alone does not establish declining lexical diversity. Neither measure demonstrates a decline in rare vocabulary or writing quality.</td></tr></table></li>
 <li style="margin-bottom: 12px;"><table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">主題意識與國際化進程：出乎意料地，數據圖表顯示大部份廣東歌至今依然以浪漫愛情及失戀為絕對主要題材，並未如日本流行文化般出現明顯「由戀愛轉向自我肯定」的大規模轉移（假設 6 暫不成立）。在地名引用上，多局限於香港、台灣、日本及西方旅遊熱點，未見因國際視野提升而令文本發生深層的「主題國際化」（假設 5 暫不成立）。</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">Thematic Focus &amp; Internationalization: Contrary to expectations, Cantonese lyrics remain overwhelmingly dominated by romantic love and heartbreak themes, lacking the paradigm shift toward "self-affirmation" seen in Japanese pop (Hypothesis 6 unsubstantiated). Geographic references remain localized (Hong Kong, Taiwan, Japan, Europe), without deep thematic internationalization (Hypothesis 5 unsubstantiated).</td></tr></table></li>
 <li style="margin-bottom: 12px;"><table style="width:100%; border-collapse:collapse; margin-bottom:15px;"><tr><td style="vertical-align:top; padding:8px 12px; width:50%; border-right:1px solid var(--border-color);">情感波動：從整套歌詞的情感分析分數 (Sentiment) 可見，歷年總體趨平穩，惟隨年代推進呈輕微而緩慢的向下（悲觀）趨勢。在晝夜意象比例上，寫「日」的歌曲數量仍持續多於寫「夜」。</td><td style="vertical-align:top; padding:8px 12px; width:50%; color:#555;">Sentiment Fluctuations: Overall sentiment scores remain relatively stable but indicate a slight, gradual downward (more pessimistic) trend over the decades. Regarding day/night imagery, songs referencing "day" still consistently outnumber those referencing "night".</td></tr></table></li>
 </ul>
@@ -260,6 +267,7 @@
 <li style="margin-bottom: 6px;">Lee, Y. H. J. (2023). A corpus study of tone-melody correspondence in Cantopop, 2000-2020 (Doctoral dissertation, University of British Columbia).</li>
 <li style="margin-bottom: 6px;">朱耀偉 (2019). 《歲月如歌: 詞話香港粵語流行曲 (增訂版)》. 三聯書店（香港）有限公司.</li>
 <li style="margin-bottom: 6px;">黃湛森 (Wong, Jum-Sum James) (2003). 《粵語流行曲的發展與興衰：香港流行音樂研究（1949－1997）》. 香港大學博士論文.</li>
+<li style="margin-bottom: 6px;">Covington, M. A., &amp; McFall, J. D. (2010). Cutting the Gordian Knot: The Moving-Average Type–Token Ratio (MATTR). Journal of Quantitative Linguistics, 17(2), 94–100. https://doi.org/10.1080/09296171003643098</li>
 </ul>
 <div style="margin-top: 25px; padding: 20px; background: var(--bg-color); border-radius: 6px; border: 1px solid var(--border-color); text-align: center;"><h3 style="margin-top:0;"><a href="https://typeduck.hk" target="_blank" style="color:var(--primary); text-decoration:none;">🦆 TypeDuck 粵拼中文輸入法</a> <span class="bilingual">TypeDuck Cantonese Phonetic Input Method</span></h3>
 <p style="color:#666; font-size:0.9em; margin:5px 0;">設有少數族裔語言提示的粵拼中文輸入法 (EDB(LE)/P&amp;R/CL/104)<br><span style="color:#888; font-size:0.9em;">Cantonese Phonetic Input Method (Jyutping) with Minority Language Prompts</span></p>
@@ -329,7 +337,12 @@
         showlegend: false
     };
     
-    const mergeLayout = (extra) => Object.assign({}, layoutBase, extra);
+    const mergeLayout = (extra) => ({
+        ...layoutBase, ...extra,
+        xaxis: { ...layoutBase.xaxis, ...extra.xaxis },
+        yaxis: { ...layoutBase.yaxis, ...extra.yaxis },
+        margin: { ...layoutBase.margin, ...extra.margin }
+    });
 
     function renderCharts() {
         let labels, stats;
@@ -349,7 +362,7 @@
         function sortedIdx(yData) {
             const idx = labels.map((_, i) => i);
             if (!isLyricist) return idx;
-            return idx.sort((a, b) => yData[b] - yData[a]);
+            return idx.sort((a, b) => (yData[b] ?? -Infinity) - (yData[a] ?? -Infinity));
         }
         function reorder(arr, idx) { return idx.map(i => arr[i]); }
 
@@ -402,11 +415,21 @@
         // TTR — sort by ttr in lyricist mode
         {
             const si = sortedIdx(stats.ttr);
-            Plotly.react('chartTTR', [{
-                x: reorder(labels, si), y: reorder(stats.ttr, si), type: isLyricist ? 'bar' : 'scatter', mode: 'lines+markers',
-                marker: { size: 8, color: colors.primary }, line: { color: colors.primary, width: 2 },
-                hovertemplate: '%{x}<br><b>%{y:.3f}</b><extra></extra>'
-            }], mergeLayout({ yaxis: { title: 'Average TTR' } }), barConfig);
+            const traces = [
+                ['ttr', 'Whole-song TTR', colors.primary],
+                ['mattr_50', 'MATTR-50', colors.secondary]
+            ].map(([key, name, color]) => ({
+                name,
+                x: reorder(labels, si), y: reorder(stats[key], si),
+                customdata: reorder(stats[key + '_song_count'], si),
+                type: isLyricist ? 'bar' : 'scatter', mode: 'lines+markers',
+                marker: { size: 8, color }, line: { color, width: 2 },
+                hovertemplate: '%{x}<br><b>%{y:.3f}</b><br>Valid songs: %{customdata}<extra>%{fullData.name}</extra>'
+            }));
+            Plotly.react('chartTTR', traces, mergeLayout({
+                yaxis: { title: 'Mean per-song ratio', range: [0, 1] },
+                barmode: 'group', showlegend: true, legend: { orientation: 'h', y: 1.15 }
+            }), barConfig);
         }
         
         // Day/Night — sort by day in lyricist mode
@@ -513,17 +536,24 @@
             div.style.display = 'none';
         } else {
             div.style.display = 'block';
-            let sorted = [...data.songs].filter(s => s.metrics[metric] !== undefined && s.metrics[metric] !== null);
+            const sorted = data.songs.filter(s => Number.isFinite(s.metrics[metric]));
             sorted.sort((a, b) => desc ? b.metrics[metric] - a.metrics[metric] : a.metrics[metric] - b.metrics[metric]);
             
             const top10 = sorted.slice(0, 10);
-            div.innerHTML = top10.map((s, i) => `
-                <div class="song-item" onclick='showLyrics(${JSON.stringify(s.id)})'>
-                    <span>${i+1}. ${s.title} (${s.year}) - ${s.singer}</span>
-                    <strong style="color:var(--primary)">${Number(s.metrics[metric]).toFixed(2)}</strong>
-                </div>
-            `).join('');
-            if (top10.length === 0) div.innerHTML = "<div>No data available</div>";
+            div.replaceChildren();
+            for (const [i, song] of top10.entries()) {
+                const item = document.createElement('div');
+                item.className = 'song-item';
+                item.addEventListener('click', () => showLyrics(song.id));
+                const title = document.createElement('span');
+                title.textContent = `${i + 1}. ${song.title} (${song.year}) - ${song.singer}`;
+                const value = document.createElement('strong');
+                value.style.color = 'var(--primary)';
+                value.textContent = song.metrics[metric].toFixed(2);
+                item.append(title, value);
+                div.append(item);
+            }
+            if (top10.length === 0) div.textContent = 'No data available';
         }
     }
 

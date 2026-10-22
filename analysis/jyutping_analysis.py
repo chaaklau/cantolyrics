@@ -118,7 +118,7 @@ def analyse_tones(lyrics):
 def analyse_tone_jumps(lyrics):
     """Detect adjacent-syllable tone jumps within lines.
     Returns jump statistics and examples of large jumps."""
-    lines = [l.strip() for l in lyrics.split('\n') if l.strip()]
+    lines = [line.strip() for line in lyrics.split('\n') if line.strip()]
     all_jumps = []
     large_jumps = []
 
@@ -155,7 +155,7 @@ def analyse_rhyme(lyrics):
     For each line, extract the last syllable's rhyme key.
     Count consecutive or nearby lines that share rhyme keys.
     """
-    lines = [l.strip() for l in lyrics.split('\n') if l.strip()]
+    lines = [line.strip() for line in lyrics.split('\n') if line.strip()]
     line_endings = []
 
     for line in lines:
